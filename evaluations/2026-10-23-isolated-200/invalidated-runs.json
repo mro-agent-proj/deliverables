@@ -1,0 +1,9 @@
+{
+  "excluded_from_corrected_evaluation": [
+    "live-smoke.json",
+    "live-rag-smoke.json",
+    "live-rag-smoke.log"
+  ],
+  "reason": "LLM2 could read LLM1 HISTORY despite B02 tool block. These runs do not use the intended independent-investigation architecture.",
+  "corrected_run": "isolated-live-smoke.json"
+}
