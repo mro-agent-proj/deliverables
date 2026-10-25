@@ -8,6 +8,7 @@
 | `final-report/` | 최종 결과보고서와 근거 자료 (2026-10 기준, 아래 참고) |
 | `architecture/` | AWS 아키텍처 다이어그램 (PNG·HTML·생성 스크립트) |
 | `design/` | 아키텍처 설계서: MVP, 문제와 AI 적용 지점, 구성도, 정상·실패 처리 흐름, LangGraph 노드, MCP 도구 |
+| [`evaluations/2026-10-23-isolated-200/`](evaluations/2026-10-23-isolated-200/) | 실제 LLM·HTTP MCP 서비스 평가 200건의 결과·감사 메타데이터·체크섬. 보고서와 별도 보관 |
 
 ## 레포 구성
 

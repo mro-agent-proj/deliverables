@@ -1,0 +1,17 @@
+{
+  "ai_container_matches_local_source": true,
+  "python_files": 34,
+  "health": {
+    "8080": 200,
+    "8101": 200,
+    "8102": 200,
+    "8100": 200,
+    "5173": 200
+  },
+  "model": "gpt-5.4-mini",
+  "db_seed_rows": 1600,
+  "sdr_cases": 71741,
+  "sdr_embeddings": 71741,
+  "old_db_volume_preserved": "mro-integration-backend_mro-pgdata",
+  "active_db_volume": "mro-live-eval-20261023-pgdata"
+}

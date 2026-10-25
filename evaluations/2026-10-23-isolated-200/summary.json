@@ -1,0 +1,366 @@
+{
+  "evaluation_date": "2026-10-23",
+  "model": "gpt-5.4-mini",
+  "cases": 200,
+  "overall": {
+    "label_agreement": {
+      "count": 97,
+      "total": 200,
+      "percent": 48.5
+    },
+    "automatic_assignment_precision": {
+      "count": 96,
+      "total": 145,
+      "percent": 66.21
+    },
+    "incorrect_automatic_assignments": 49,
+    "assignable_case_success": {
+      "count": 96,
+      "total": 197,
+      "percent": 48.73
+    },
+    "human_review_recall": {
+      "count": 1,
+      "total": 3,
+      "percent": 33.33
+    },
+    "human_expected_but_assigned": 2,
+    "human_review_count": 55,
+    "human_review_reasons": {
+      "RETRY_LIMIT": 31,
+      "VALIDATION_FAILED": 11,
+      "AGENT_NEEDS_HUMAN": 13
+    },
+    "path_agreement": {
+      "count": 85,
+      "total": 200,
+      "percent": 42.5
+    },
+    "trap_history_citations": 37,
+    "client_timeout_or_submission_failure": 0,
+    "system_error_results": 0,
+    "median_seconds": 10.05,
+    "p95_seconds": 60.4,
+    "sum_request_seconds": 4387.8
+  },
+  "routes": {
+    "llm1_direct": {
+      "cases": 116,
+      "passed_assignments": 67,
+      "failed_assignments": 49,
+      "human_review": 0
+    },
+    "llm23": {
+      "cases": 84,
+      "passed_assignments": 29,
+      "failed_assignments": 0,
+      "human_review": 55
+    }
+  },
+  "failed_assignment_categories": {
+    "wrong_department": 11,
+    "forbidden_history": 36,
+    "expected_human_review": 2
+  },
+  "by_split": {
+    "dev": {
+      "label_agreement": {
+        "count": 38,
+        "total": 80,
+        "percent": 47.5
+      },
+      "automatic_assignment_precision": {
+        "count": 38,
+        "total": 56,
+        "percent": 67.86
+      },
+      "incorrect_automatic_assignments": 18,
+      "assignable_case_success": {
+        "count": 38,
+        "total": 79,
+        "percent": 48.1
+      },
+      "human_review_recall": {
+        "count": 0,
+        "total": 1,
+        "percent": 0.0
+      },
+      "human_expected_but_assigned": 1,
+      "human_review_count": 24,
+      "human_review_reasons": {
+        "VALIDATION_FAILED": 4,
+        "RETRY_LIMIT": 13,
+        "AGENT_NEEDS_HUMAN": 7
+      },
+      "path_agreement": {
+        "count": 34,
+        "total": 80,
+        "percent": 42.5
+      },
+      "trap_history_citations": 13,
+      "client_timeout_or_submission_failure": 0,
+      "system_error_results": 0,
+      "median_seconds": 9.1,
+      "p95_seconds": 60.4,
+      "sum_request_seconds": 1885.6
+    },
+    "test": {
+      "label_agreement": {
+        "count": 59,
+        "total": 120,
+        "percent": 49.17
+      },
+      "automatic_assignment_precision": {
+        "count": 58,
+        "total": 89,
+        "percent": 65.17
+      },
+      "incorrect_automatic_assignments": 31,
+      "assignable_case_success": {
+        "count": 58,
+        "total": 118,
+        "percent": 49.15
+      },
+      "human_review_recall": {
+        "count": 1,
+        "total": 2,
+        "percent": 50.0
+      },
+      "human_expected_but_assigned": 1,
+      "human_review_count": 31,
+      "human_review_reasons": {
+        "RETRY_LIMIT": 18,
+        "AGENT_NEEDS_HUMAN": 6,
+        "VALIDATION_FAILED": 7
+      },
+      "path_agreement": {
+        "count": 51,
+        "total": 120,
+        "percent": 42.5
+      },
+      "trap_history_citations": 24,
+      "client_timeout_or_submission_failure": 0,
+      "system_error_results": 0,
+      "median_seconds": 10.05,
+      "p95_seconds": 60.3,
+      "sum_request_seconds": 2502.2
+    }
+  },
+  "by_group": {
+    "A": {
+      "label_agreement": {
+        "count": 61,
+        "total": 64,
+        "percent": 95.31
+      },
+      "automatic_assignment_precision": {
+        "count": 61,
+        "total": 61,
+        "percent": 100.0
+      },
+      "incorrect_automatic_assignments": 0,
+      "assignable_case_success": {
+        "count": 61,
+        "total": 64,
+        "percent": 95.31
+      },
+      "human_review_recall": {
+        "count": 0,
+        "total": 0,
+        "percent": null
+      },
+      "human_expected_but_assigned": 0,
+      "human_review_count": 3,
+      "human_review_reasons": {
+        "RETRY_LIMIT": 1,
+        "VALIDATION_FAILED": 1,
+        "AGENT_NEEDS_HUMAN": 1
+      },
+      "path_agreement": {
+        "count": 58,
+        "total": 64,
+        "percent": 90.62
+      },
+      "trap_history_citations": 0,
+      "client_timeout_or_submission_failure": 0,
+      "system_error_results": 0,
+      "median_seconds": 6.1,
+      "p95_seconds": 24.2,
+      "sum_request_seconds": 614.6
+    },
+    "B": {
+      "label_agreement": {
+        "count": 29,
+        "total": 96,
+        "percent": 30.21
+      },
+      "automatic_assignment_precision": {
+        "count": 28,
+        "total": 56,
+        "percent": 50.0
+      },
+      "incorrect_automatic_assignments": 28,
+      "assignable_case_success": {
+        "count": 28,
+        "total": 94,
+        "percent": 29.79
+      },
+      "human_review_recall": {
+        "count": 1,
+        "total": 2,
+        "percent": 50.0
+      },
+      "human_expected_but_assigned": 1,
+      "human_review_count": 40,
+      "human_review_reasons": {
+        "VALIDATION_FAILED": 8,
+        "RETRY_LIMIT": 25,
+        "AGENT_NEEDS_HUMAN": 7
+      },
+      "path_agreement": {
+        "count": 21,
+        "total": 96,
+        "percent": 21.88
+      },
+      "trap_history_citations": 19,
+      "client_timeout_or_submission_failure": 0,
+      "system_error_results": 0,
+      "median_seconds": 29.2,
+      "p95_seconds": 64.4,
+      "sum_request_seconds": 2947.2
+    },
+    "C": {
+      "label_agreement": {
+        "count": 3,
+        "total": 16,
+        "percent": 18.75
+      },
+      "automatic_assignment_precision": {
+        "count": 3,
+        "total": 9,
+        "percent": 33.33
+      },
+      "incorrect_automatic_assignments": 6,
+      "assignable_case_success": {
+        "count": 3,
+        "total": 15,
+        "percent": 20.0
+      },
+      "human_review_recall": {
+        "count": 0,
+        "total": 1,
+        "percent": 0.0
+      },
+      "human_expected_but_assigned": 1,
+      "human_review_count": 7,
+      "human_review_reasons": {
+        "RETRY_LIMIT": 4,
+        "VALIDATION_FAILED": 1,
+        "AGENT_NEEDS_HUMAN": 2
+      },
+      "path_agreement": {
+        "count": 2,
+        "total": 16,
+        "percent": 12.5
+      },
+      "trap_history_citations": 5,
+      "client_timeout_or_submission_failure": 0,
+      "system_error_results": 0,
+      "median_seconds": 21.15,
+      "p95_seconds": 66.3,
+      "sum_request_seconds": 476.7
+    },
+    "D": {
+      "label_agreement": {
+        "count": 4,
+        "total": 24,
+        "percent": 16.67
+      },
+      "automatic_assignment_precision": {
+        "count": 4,
+        "total": 19,
+        "percent": 21.05
+      },
+      "incorrect_automatic_assignments": 15,
+      "assignable_case_success": {
+        "count": 4,
+        "total": 24,
+        "percent": 16.67
+      },
+      "human_review_recall": {
+        "count": 0,
+        "total": 0,
+        "percent": null
+      },
+      "human_expected_but_assigned": 0,
+      "human_review_count": 5,
+      "human_review_reasons": {
+        "AGENT_NEEDS_HUMAN": 3,
+        "VALIDATION_FAILED": 1,
+        "RETRY_LIMIT": 1
+      },
+      "path_agreement": {
+        "count": 4,
+        "total": 24,
+        "percent": 16.67
+      },
+      "trap_history_citations": 13,
+      "client_timeout_or_submission_failure": 0,
+      "system_error_results": 0,
+      "median_seconds": 8.05,
+      "p95_seconds": 30.2,
+      "sum_request_seconds": 349.3
+    }
+  },
+  "llm2_output_cases": 83,
+  "llm2_department_agreement": {
+    "count": 71,
+    "total": 82,
+    "percent": 86.59
+  },
+  "correct_llm2_department_held": 42,
+  "checkpoint_audit": {
+    "requests": 200,
+    "input_boundaries": 176,
+    "history_records": 0,
+    "b02_calls": 0
+  },
+  "tool_calls_by_node": {
+    "classify": {
+      "get_request_context": 200,
+      "search_departments": 200,
+      "get_aircraft_history": 226
+    },
+    "direct": {
+      "get_request_context": 116,
+      "search_departments": 116,
+      "get_aircraft_history": 119
+    },
+    "investigate": {
+      "get_request_context": 84,
+      "search_departments": 176,
+      "search_jasc_codes": 77,
+      "search_sdr_cases": 84,
+      "DUPLICATE_CALL": 1
+    },
+    "review": {
+      "search_departments": 174
+    },
+    "finalize": {
+      "get_request_context": 29,
+      "search_departments": 29,
+      "get_evidence": 97,
+      "get_sdr_amm_references": 29
+    }
+  },
+  "validation": {
+    "count": 6,
+    "total": 6,
+    "percent": 100.0
+  },
+  "label_review_status": {
+    "needs_final_review": 24,
+    "not_reviewed": 161,
+    "decided": 15
+  }
+}
