@@ -6,6 +6,7 @@
 | 폴더 | 내용 |
 | --- | --- |
 | `final-report/` | 최종 결과보고서와 근거 자료 (2026-10 기준, 아래 참고) |
+| `architecture/` | AWS 아키텍처 다이어그램 (PNG·HTML·생성 스크립트) |
 
 ## final-report
 
