@@ -47,7 +47,7 @@
 |:--|:--|:--|:--|
 | **신고자** | 정비 신고 접수 | `/reporter` | `POST /api/v1/requests` |
 | | 접수 정보 보정 | `/reporter` | 422 `NEEDS_SUPPLEMENT` 응답의 등록 값을 한 번에 적용 |
-| | 처리 단계·결과 확인 | `/reporter` | `GET /api/v1/requests`, `GET /api/v1/requests/{id}/trace` |
+| | 처리 단계·결과 확인 | `/reporter` | `GET /api/v1/requests`, `GET /api/v1/requests/{id}` (목록 15초, 선택한 처리 중 요청 3초 갱신) |
 | **정비팀** | 배정 요청·AI 판단 근거 확인 | `/maintenance` | `GET /api/v1/assignments`, `GET /api/v1/requests/{id}/trace` |
 | | 배정 수락 | `/maintenance` | `POST /api/v1/assignments/{id}/accept` |
 | | 배정 거절 (사유 입력) | `/maintenance` | `POST /api/v1/assignments/{id}/reject` → 사람 검토 `TEAM_REJECTED` |
@@ -96,6 +96,7 @@ flowchart LR
         RM["rag-mcp<br/>R01~R05"]
         DB[("PostgreSQL 16<br/>+ pgvector")]
         OAI["OpenAI<br/>gpt-5.4-mini"]
+        EMB["OpenAI 임베딩 API<br/>text-embedding-3-large · 1024차원"]
     end
 
     FE -- "HTTP · JSON" --> RC --> IV --> WF
@@ -106,6 +107,7 @@ flowchart LR
     LG -- "Bearer 토큰" --> RM
     BM -- "조회 전용 계정" --> DB
     RM -- "조회 전용 계정" --> DB
+    RM <--> EMB
     LG <--> OAI
     WF --> DB
 ```
@@ -144,8 +146,9 @@ sequenceDiagram
     AI->>MQ: STAGE_STARTED · STAGE_RESULT · COMPLETED (mro.agent.events)
     MQ->>BE: AgentEventListener.onEvent → AgentEventService.handle
     BE->>BE: EvidenceValidator.findProblems (문제 없음) → RequestWorkflow.assign (ASSIGNED)
-    FE->>BE: GET /api/v1/requests/{id}/trace (3초마다)
-    BE-->>FE: 단계 · 판단 요약 · 인용 근거
+    FE->>BE: GET /api/v1/requests/{id} (신고자, 선택한 처리 중 요청만 3초)
+    BE-->>FE: 진행 상태 · 결과
+    Note over FE,BE: 상세 trace는 정비팀·관리자만 조회 가능
     정비팀->>FE: 배정 확인
     FE->>BE: POST /api/v1/assignments/{id}/accept (ACCEPTED)
 ```
@@ -170,7 +173,8 @@ sequenceDiagram
         BE-->>FE: 422 NEEDS_SUPPLEMENT + 등록된 값 (AI 작업을 만들지 않음)
         FE-->>신고자: 맞는 값을 한 번에 적용
     else 근거 부족 · 재조사 한도 초과
-        AI->>AI: review → increment (재조사, 최대 2회) → limit → hold
+        AI->>AI: review → increment → investigation_started (재조사, 최대 2회)
+        AI->>AI: 한도 도달 시 review → limit → hold
         AI->>MQ: COMPLETED (보류)
         MQ->>BE: AgentEventService.handle
         BE->>BE: RequestWorkflow.sendToHumanReview (AGENT_NEEDS_HUMAN · RETRY_LIMIT)
@@ -190,10 +194,10 @@ sequenceDiagram
 
 | 실패 | 어디서 막나 | 결과 |
 |:--|:--|:--|
-| 접수 정보 불일치 · 필수값 누락 · 권한 없음 | `IntakeValidator.validate` | 422, AI 실행 안 함 |
+| 접수 정보 불일치 · 필수값 누락 · 타 항공사 기체(FORBIDDEN_AIRLINE) | `IntakeValidator.validate` | 422, AI 실행 안 함 |
 | 이력·사례로 근거를 찾지 못함 | LangGraph `hold` | 사람 검토 `AGENT_NEEDS_HUMAN` |
 | 재조사 2회로도 충돌이 남음 | LangGraph `limit` → `hold` | 사람 검토 `RETRY_LIMIT` |
-| 인용 근거가 실제 조회 기록과 다름 | `EvidenceValidator.findProblems` | 사람 검토 `VALIDATION_FAILED` |
+| 인용 근거 재검증 실패 | AI 발행 전 검증 또는 Backend `EvidenceValidator.findProblems` | 사람 검토 `VALIDATION_FAILED` |
 | 모델·도구 오류, 5분 초과, 메시지 처리 실패 | `FAILED` 이벤트, `AgentTimeoutJob`, `RunDeadLetterListener` | 사람 검토 `SYSTEM_ERROR` |
 | 정비팀이 배정을 거절 | `AssignmentService.reject` | 사람 검토 `TEAM_REJECTED` |
 
@@ -212,10 +216,10 @@ flowchart TD
     I1 --> INV["investigate<br/>LLM2 독립 조사<br/>(InvestigatorState만 입력)"]
     INV --> MG["merge_for_review<br/>요청·버전·범위·스냅샷 검사"]
     MG --> R1["review_started"] --> RV["review<br/>LLM3 판단·근거 대조"]
-    RV -- "통과" --> FI["finalize<br/>최종 근거 검증"]
+    RV -- "PASS / HUMAN" --> FI["finalize<br/>PASS: 근거 검증·참고 AMM<br/>HUMAN: 사람 검토 결과"]
     RV -- "재조사" --> INC["increment"] --> I1
     RV -- "재조사 한도(2회)" --> LM["limit"] --> HO
-    RV -- "보류" --> HO
+    RV -- "내부 hold 있음" --> HO
     DR --> DONE(["completed"])
     FI --> DONE
     HO --> DONE
@@ -227,7 +231,7 @@ flowchart TD
 | `investigate` | LLM1 결론·수리이력을 받지 않고, 원본 신고와 자체 검색 결과만으로 조사 (LLM2) |
 | `merge_for_review` | LLM1·LLM2 결과를 합치기 전에 요청·버전·검색 범위·스냅샷이 그대로인지 검사 |
 | `review` | 두 판단과 원문을 대조해 통과·재조사·보류를 결정 (LLM3) |
-| `finalize` | 인용 근거를 다시 조회해 확인하고, 근거 SDR의 참고 AMM 번호를 첨부 |
+| `finalize` | PASS는 근거 재검증·참고 AMM 첨부, HUMAN은 사람 검토 결과 구성 |
 | `hold` | 근거가 부족하거나 재조사 한도를 넘으면 사람 검토로 보냄 |
 
 <br>
@@ -238,7 +242,7 @@ AI는 MCP(Model Context Protocol)로 두 서버의 도구 9개를 호출합니�
 
 | 서버 | ID | 도구 | 하는 일 | 누가 부르나 |
 |:--|:--:|:--|:--|:--|
-| business-mcp | B01 | `get_request_context` | 접수 내용과 이 실행에 등록된 검색 범위 | 실행기 (시작·최종 확정) |
+| business-mcp | B01 | `get_request_context` | 접수 내용과 이 실행에 등록된 검색 범위 | 실행기 (초기 준비·LLM2 독립 컨텍스트 구성·최종 검증) |
 | | B02 | `get_aircraft_history` | 같은 기체의 이전 수리이력 (접수 시각 이전만) | LLM1, LLM3, 최종 검증 (LLM2는 차단) |
 | | B03 | `search_departments` | 정비 부서 8개와 담당 ATA | 실행기 (단계마다 고정 확인) |
 | rag-mcp | R01 | `search_jasc_codes` | JASC 결함 코드 후보와 정의 | LLM2, LLM3 |
@@ -246,8 +250,12 @@ AI는 MCP(Model Context Protocol)로 두 서버의 도구 9개를 호출합니�
 | | R03 | `search_amm_references` | AMM 번호로 그 번호가 인용된 SDR 문장 조회 | LLM 도구 목록에서 제외 |
 | | R04 | `search_technical_docs` | Airbus Safety First 기술자료 의미 검색 | LLM2, LLM3 |
 | | R05 | `get_evidence` | 받은 근거의 원문과 인용 위치 재확인 | LLM2, LLM3, 최종 검증 |
-| | 확장 | `get_sdr_amm_references` | 근거 SDR에 인용된 AMM 번호 조회 (참고용 첨부) | 실행기 (배정 확정 후) |
+| | 확장 | `get_sdr_amm_references` | 근거 SDR에 인용된 AMM 번호 조회 (참고용 첨부) | 실행기 (AI 판단 완료 후, 결과 이벤트 발행 전) |
 
-> 서비스 시나리오 200건 실행에서 LLM2는 R01을 77회, R02를 84회 골라 썼고, 최종 검증은 R05를 97회 호출했습니다.
+> 2026-10-23 서비스 시나리오 200건의 노드별 trace에서 LLM2는 R01을 77회, R02를 84회 골라 썼고, 최종 검증은 R05를 97회 호출했습니다.
 
 <br>
+
+R02의 기본 검색 범위는 같은 기본 모델·ceo/neo 세대인 `MODEL_GENERATION`입니다. 초기 검색이 부족하면 이유를 남겨 `FAMILY`로 넓힐 수 있고, Backend 허용 목록은 단어·벡터 검색과 R05에 함께 적용됩니다. 정확 모델 `EXACT` 및 미확인 모델의 제한은 유지합니다. 질의 인코더 미설정·SDR 벡터 미준비·임베딩 API 실패 시 R02는 경고와 함께 단어 검색으로 대체합니다. 고정 단어검색 색인 자체가 없거나 비정상이면 오류입니다. 검색 범위 확대는 정비 구성의 동일성을 보증하지 않습니다.
+
+위 도구 수는 HTTP 요청 수나 검색 정확도가 아닙니다. 평가 정의·제약·버전은 [평가 원자료](../evaluations/2026-10-23-isolated-200/README.md)와 [최종 보고서 기준](../final-report/README.md)에 있습니다.
