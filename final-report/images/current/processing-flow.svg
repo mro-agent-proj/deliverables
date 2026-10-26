@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="820" viewBox="0 0 1000 820" role="img"><title>분류·조사·검토와 MCP 사용 경계</title><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#64748b"/></marker></defs><rect width="1000" height="820" fill="white"/>
+<text x="28" y="42" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="27" font-weight="700" fill="#1e3a5f" text-anchor="start">분류·조사·검토와 MCP 사용 경계</text>
+<text x="28" y="73" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#64748b" text-anchor="start">AMM 번호는 판단 완료 후 정비팀에 전달하는 참고자료</text>
+<rect x="295" y="105" width="410" height="90" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+<text x="500.0" y="136" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="20" font-weight="700" fill="#1e3a5f" text-anchor="middle">접수 검증 · Backend</text>
+<text x="500.0" y="164" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">누락·충돌은 422 보완 안내 / 통과 시 AI 실행</text>
+<rect x="295" y="235" width="410" height="105" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="500.0" y="266" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="20" font-weight="700" fill="#1e3a5f" text-anchor="middle">LLM1 · 초기 분류</text>
+<text x="500.0" y="294" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">B01 · B03 · B02</text>
+<text x="500.0" y="318" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">증상·같은 기체 이력의 맥락 비교</text>
+<path d="M500,195 L500,235" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="30" y="390" width="275" height="105" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+<text x="167.5" y="421" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="20" font-weight="700" fill="#1e3a5f" text-anchor="middle">직접 배정 결과</text>
+<text x="167.5" y="449" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">이력 연결 근거 충분</text>
+<text x="167.5" y="473" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">B01 · B03 · B02 재확인</text>
+<rect x="390" y="390" width="580" height="105" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="680.0" y="421" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="20" font-weight="700" fill="#1e3a5f" text-anchor="middle">LLM2 · 독립 조사</text>
+<text x="680.0" y="449" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">원본 신고 + 자체 조사만 / B02·HISTORY 차단</text>
+<text x="680.0" y="473" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">B01·B03 준비 / R01·R02·R04·R05 선택</text>
+<path d="M390,340 L390,360 L167,360 L167,390" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="190" y="353" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="15" font-weight="400" fill="#475569" text-anchor="start">충분</text>
+<path d="M600,340 L680,340 L680,390" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="692" y="363" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="15" font-weight="400" fill="#475569" text-anchor="start">불충분</text>
+<rect x="390" y="545" width="580" height="105" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="680.0" y="576" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="20" font-weight="700" fill="#1e3a5f" text-anchor="middle">LLM3 · 검토</text>
+<text x="680.0" y="604" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">merge_for_review에서 LLM1·2 자료 병합</text>
+<text x="680.0" y="628" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">B03 확인 / B02·R01·R02·R04·R05 선택 가능</text>
+<path d="M680,495 L680,545" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M970,597 L987,597 L987,370 L945,370 L945,390" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="6 5"/>
+<text x="866" y="356" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="15" font-weight="400" fill="#475569" text-anchor="start">재조사 ≤ 2</text>
+<rect x="30" y="545" width="275" height="105" rx="10" fill="#fff1f2" stroke="#f43f5e" stroke-width="2"/>
+<text x="167.5" y="576" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="20" font-weight="700" fill="#1e3a5f" text-anchor="middle">사람 검토</text>
+<text x="167.5" y="604" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">근거 부족 · 충돌 · 검증 실패</text>
+<text x="167.5" y="628" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">재조사 한도 · 정비팀 거절</text>
+<path d="M390,600 L305,600" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="295" y="710" width="675" height="80" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+<text x="632.5" y="741" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="20" font-weight="700" fill="#1e3a5f" text-anchor="middle">AI 최종 검증 → Backend 배정 → 정비팀 응답</text>
+<text x="632.5" y="769" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="16" font-weight="400" fill="#334155" text-anchor="middle">경로별 근거 재확인 / 조사 경로: SDR→AMM 첨부 / Spring 검증</text>
+<path d="M680,650 L680,710" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="691" y="686" font-family="Apple SD Gothic Neo, Arial, sans-serif" font-size="15" font-weight="400" fill="#475569" text-anchor="start">통과</text>
+<path d="M167,495 L167,520 L15,520 L15,750 L295,750" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+</svg>

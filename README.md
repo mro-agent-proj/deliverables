@@ -25,14 +25,14 @@
 
 ## final-report
 
-- `항공기_정비요청_Agent_최종결과보고서.pdf` (26쪽), 같은 내용의 `.html`
-- `final_report.template.html`: 원본 HTML. 고친 뒤 Chrome으로 PDF 인쇄
-- `images/`: 아키텍처·LangGraph 그림, 화면 캡처 13장 (시연 데이터 11건으로 촬영)
-- `raw/`: 시나리오 실행 결과(`scenario_results.json`), S10 에이전트 추적, 인증·DLQ·테스트 기록
-- `트러블슈팅.md`: 통합하며 겪은 문제 20건과 해결
-- `v1/`: 팀이 처음 쓴 v1 보고서와 체크리스트
+- [현재 PDF](final-report/항공기_정비요청_Agent_최종결과보고서.pdf)와 같은 내용의 HTML: **2026-10-26 코드 기준 개정**
+- `final_report.template.html`: 기존 디자인을 유지한 편집 템플릿
+- `source/`: HTML·SVG·PDF 생성 스크립트와 기준 커밋
+- `images/current/`: 현재 구조도. 기존 캡처·v1 그림은 과거 기록으로 보존
+- `raw/`, `v1/`: 2026-10-21의 구 시나리오 23건·S10 추적·인증·DLQ 기록과 초기 보고서
+- `트러블슈팅.md`: 과거 문제 20건을 보존하고 현재 후속 상태 추가
 
-보고서의 수치와 실행 결과는 작성 당시 [integration](https://github.com/mro-agent-proj/integration)이 고정한 커밋 조합(2026-10-23) 기준입니다.
+대표 성능은 **2026-10-23 격리 후 서비스 평가 200건**을 재집계했습니다. 기존 10/21 시연·화면과 합산하지 않습니다. 상세 출처·재생성 방법·최신 화면 재촬영 목록은 [보고서 README](final-report/README.md)에 있습니다.
 이 폴더는 원래 integration 레포의 `report/`에 있었고, 커밋 기록을 그대로 가져왔습니다.
 
 ## 운영 규칙
