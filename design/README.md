@@ -1,7 +1,7 @@
 # 아키텍처 설계서
 
 항공기 정비요청 Agent의 MVP, 문제 정의, 구성도, 처리 흐름(정상·실패), LangGraph 노드 흐름, MCP 도구, AWS 배포 구성을 한 문서로 정리했습니다.
-화살표와 노드 이름은 실제 코드의 엔드포인트·클래스·메서드·큐·LangGraph 노드 이름과 같습니다 (2026-10-26 각 레포 main 기준).
+화살표와 노드 이름은 실제 코드의 엔드포인트·클래스·메서드·큐·LangGraph 노드 이름과 같습니다.
 
 | 구성 | 코드 위치 |
 |:--|:--|
@@ -124,19 +124,19 @@ AI는 MCP(Model Context Protocol)로 두 서버의 도구 9개를 호출합니�
 | | R05 | `get_evidence` | 받은 근거의 원문과 인용 위치 재확인 | LLM2, LLM3, 최종 검증 |
 | | 확장 | `get_sdr_amm_references` | 근거 SDR에 인용된 AMM 번호 조회 (참고용 첨부) | 실행기 (AI 판단 완료 후, 결과 이벤트 발행 전) |
 
-> 2026-10-23 서비스 시나리오 200건의 노드별 trace에서 LLM2는 R01을 77회, R02를 84회 골라 썼고, 최종 검증은 R05를 97회 호출했습니다.
+> 서비스 시나리오 200건의 노드별 trace에서 LLM2는 R01을 77회, R02를 84회 골라 썼고, 최종 검증은 R05를 97회 호출했습니다.
 
 <br>
 
 R02의 기본 검색 범위는 같은 기본 모델·ceo/neo 세대인 `MODEL_GENERATION`입니다. 초기 검색이 부족하면 이유를 남겨 `FAMILY`로 넓힐 수 있고, Backend 허용 목록은 단어·벡터 검색과 R05에 함께 적용됩니다. 정확 모델 `EXACT` 및 미확인 모델의 제한은 유지합니다. 질의 인코더 미설정·SDR 벡터 미준비·임베딩 API 실패 시 R02는 경고와 함께 단어 검색으로 대체합니다. 고정 단어검색 색인 자체가 없거나 비정상이면 오류입니다. 검색 범위 확대는 정비 구성의 동일성을 보증하지 않습니다.
 
-위 도구 수는 HTTP 요청 수나 검색 정확도가 아닙니다. 평가 정의·제약·버전은 [평가 원자료](../evaluations/2026-10-23-isolated-200/README.md)와 [최종 보고서 기준](../report/README.md)에 있습니다.
+평가 정의는 [평가 원자료](../evaluations/2026-10-23-isolated-200/README.md)와 [최종 보고서](../report/README.md)에 있습니다.
 
 <br>
 
 ## AWS 배포 구성
 
-[infra](https://github.com/mro-agent-proj/infra) 레포 Terraform으로 정의한 최종 배포 구성입니다. 아직 AWS에 배포하지 않았고 `terraform validate`까지 확인했습니다 (infra `fd0e8e4` 이후, 2026-10-26).
+[infra](https://github.com/mro-agent-proj/infra) 레포 Terraform으로 정의한 최종 배포 구성입니다. 아직 AWS에 배포하지는 않았습니다.
 
 <p align="center"><img src="aws/aws-architecture.png" width="1000" alt="AWS 아키텍처: CloudFront·WAF, ALB, ECS Fargate 서비스, Amazon MQ, RDS PostgreSQL"></p>
 
@@ -145,4 +145,4 @@ R02의 기본 검색 범위는 같은 기본 모델·ceo/neo 세대인 `MODEL_GE
 - **1회성 작업:** db-init(DB 계정), rag-restore(S3 rag-data → RDS)
 - 주황 테두리는 ECS Fargate 서비스, 작은 원은 그 위에서 쓰는 기술입니다. 확대해서 보려면 [aws-architecture.html](aws/aws-architecture.html)을 브라우저로 엽니다.
 
-아이콘: [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/), 기술 로고 [gilbarbara/logos](https://github.com/gilbarbara/logos)(CC0). 각 로고는 해당 프로젝트·회사의 상표입니다. 다이어그램 생성 스크립트는 커밋 [`4236b47`](https://github.com/mro-agent-proj/deliverables/tree/4236b47/architecture/source)에 있습니다.
+아이콘: [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/), 기술 로고 [gilbarbara/logos](https://github.com/gilbarbara/logos)(CC0). 각 로고는 해당 프로젝트·회사의 상표입니다.
