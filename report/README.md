@@ -4,7 +4,7 @@
 
 - [PDF · 26쪽](항공기_정비요청_Agent_최종결과보고서.pdf)
 - [동일 내용 HTML](항공기_정비요청_Agent_최종결과보고서.html)
-- [초기 보고서 v1 (2026-10-21)](v1/MRO_Agent_최종결과보고서_v1.pdf)
+- [초기 보고서 v1 (2026-10-21)](archive/최종결과보고서_v1_2026-10-21.pdf)
 - [과거 트러블슈팅과 후속 상태](트러블슈팅.md)
 
 ## 기준을 구분해서 읽기
@@ -35,9 +35,9 @@
 
 | 캡처 | 확인한 내용 | 본문 |
 | --- | --- | --- |
-| [관리자 콘솔](images/current/screenshots-20261026/01-admin-console.png) | 인원 현황 진입 버튼, RAG 상태, 누적 요청 통계 | 그림 3-8 |
-| [인원 현황](images/current/screenshots-20261026/02-staffing.png) | 8부서·38명, 출근 25·작업 가능 15·작업 불가 10·미출근 13 | 그림 3-9 |
-| [SDR 근거와 참고 AMM](images/current/screenshots-20261026/03-evidence-reference-amm.png) | #d380aebd, AMM 참조번호·인용 맥락·SDR ID 별도 패널 | 그림 3-10 |
+| [관리자 콘솔](images/screens/08-admin-console.png) | 인원 현황 진입 버튼, RAG 상태, 누적 요청 통계 | 그림 3-8 |
+| [인원 현황](images/screens/09-staffing.png) | 8부서·38명, 출근 25·작업 가능 15·작업 불가 10·미출근 13 | 그림 3-9 |
+| [SDR 근거와 참고 AMM](images/screens/10-evidence-reference-amm.png) | #d380aebd, AMM 참조번호·인용 맥락·SDR ID 별도 패널 | 그림 3-10 |
 
 콘솔 통계는 **누적 206건** 기준이므로 평가 200건 결과와 합산하거나 대체하지 않습니다. AMM 화면도 10/23에 저장된 결과를 조회한 것이며 모델을 새로 호출한 결과가 아닙니다. 인원 화면의 15초 갱신 주기는 코드 근거이고 정지 이미지가 주기 동작 자체를 입증하지는 않습니다.
 
