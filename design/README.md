@@ -64,53 +64,7 @@
 
 ## 구성도
 
-```mermaid
-flowchart LR
-    U(["신고자 · 정비팀 · 관리자"]) --> FE
-
-    subgraph F["Frontend"]
-        FE["dashboard · Vue 3<br/>/reporter /maintenance /admin"]
-    end
-
-    subgraph B["Backend · Spring Boot"]
-        RC["RepairRequestController<br/>POST /api/v1/requests"]
-        IV["IntakeValidator<br/>접수 검증 (422)"]
-        AD["AgentDispatcher<br/>+ McpDelegationService<br/>검색 범위 · 토큰 2개"]
-        EV["AgentEventService<br/>+ EvidenceValidator<br/>근거 재검증"]
-        WF["RequestWorkflow<br/>assign · sendToHumanReview"]
-    end
-
-    subgraph M["Messaging · RabbitMQ"]
-        RQ[["mro.agent.run"]]
-        EQ[["mro.agent.events"]]
-        DLQ[["mro.agent.run.dlq"]]
-    end
-
-    subgraph A["AI Layer · FastAPI + LangGraph"]
-        RW["RabbitWorker<br/>handle_message"]
-        LG["LangGraph 노드 13개<br/>LLM1 · LLM2 · LLM3"]
-    end
-
-    subgraph D["Model & Data"]
-        BM["business-mcp<br/>B01~B03"]
-        RM["rag-mcp<br/>R01~R05"]
-        DB[("PostgreSQL 16<br/>+ pgvector")]
-        OAI["OpenAI<br/>gpt-5.4-mini"]
-        EMB["OpenAI 임베딩 API<br/>text-embedding-3-large · 1024차원"]
-    end
-
-    FE -- "HTTP · JSON" --> RC --> IV --> WF
-    WF -. "커밋 후" .-> AD --> RQ --> RW --> LG
-    LG -- "단계·최종 이벤트" --> EQ --> EV --> WF
-    RQ -. "처리 실패" .-> DLQ
-    LG -- "Bearer 토큰" --> BM
-    LG -- "Bearer 토큰" --> RM
-    BM -- "조회 전용 계정" --> DB
-    RM -- "조회 전용 계정" --> DB
-    RM <--> EMB
-    LG <--> OAI
-    WF --> DB
-```
+<p align="center"><img src="system-architecture.png" width="1000" alt="구성도: dashboard, backend, RabbitMQ, AI 서버, MCP 서버, PostgreSQL"></p>
 
 > **Harness** — MCP 도구 10초·재시도 1회 · 모델 호출 45초 · 단계별 도구 호출 8회 · 재조사 최대 2회 · AI 실행 280초 · 백엔드 처리 한도 5분 · 실행별 MCP 토큰 10분 · LLM 출력 스키마 검증 실패 시 1회 재요청
 
@@ -118,79 +72,13 @@ flowchart LR
 
 ## 처리 흐름: 정상
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor 신고자
-    participant FE as dashboard
-    participant BE as backend
-    participant MQ as RabbitMQ
-    participant AI as AI 서버 (LangGraph)
-    participant MCP as business-mcp · rag-mcp
-    actor 정비팀
-
-    신고자->>FE: 기체번호 · 기종 · 증상 입력
-    FE->>BE: POST /api/v1/requests
-    BE->>BE: IntakeValidator.validate → RequestWorkflow.submit (QUEUED)
-    BE->>BE: AgentDispatcher.onRunRequested → McpDelegationService.prepare
-    BE->>MQ: RunRequestPublisher.publish (mro.agent.run + MCP 토큰 2개)
-    MQ->>AI: RabbitWorker → handle_message → MaintenanceService.execute
-    AI->>MCP: classify: B01 get_request_context · B02 get_aircraft_history · B03 search_departments
-    alt 같은 기체 이력으로 근거 확인
-        AI->>AI: direct (바로 배정 제안)
-    else 근거 부족
-        AI->>MCP: investigate: R01 · R02 search_sdr_cases · R04 · R05
-        AI->>AI: merge_for_review → review (LLM3 대조)
-        AI->>MCP: finalize: R05 get_evidence · get_sdr_amm_references
-    end
-    AI->>MQ: STAGE_STARTED · STAGE_RESULT · COMPLETED (mro.agent.events)
-    MQ->>BE: AgentEventListener.onEvent → AgentEventService.handle
-    BE->>BE: EvidenceValidator.findProblems (문제 없음) → RequestWorkflow.assign (ASSIGNED)
-    FE->>BE: GET /api/v1/requests/{id} (신고자, 선택한 처리 중 요청만 3초)
-    BE-->>FE: 진행 상태 · 결과
-    Note over FE,BE: 상세 trace는 정비팀·관리자만 조회 가능
-    정비팀->>FE: 배정 확인
-    FE->>BE: POST /api/v1/assignments/{id}/accept (ACCEPTED)
-```
+<p align="center"><img src="sequence-normal.png" width="1000" alt="정상 처리 시퀀스: 접수부터 자동 배정과 정비팀 수락까지"></p>
 
 <br>
 
 ## 처리 흐름: 실패
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor 신고자
-    participant FE as dashboard
-    participant BE as backend
-    participant MQ as RabbitMQ
-    participant AI as AI 서버 (LangGraph)
-    actor 관리자
-
-    alt 접수 정보가 등록 정보와 다름
-        신고자->>FE: 기체번호 · 기종 · 증상 입력
-        FE->>BE: POST /api/v1/requests
-        BE-->>FE: 422 NEEDS_SUPPLEMENT + 등록된 값 (AI 작업을 만들지 않음)
-        FE-->>신고자: 맞는 값을 한 번에 적용
-    else 근거 부족 · 재조사 한도 초과
-        AI->>AI: review → increment → investigation_started (재조사, 최대 2회)
-        AI->>AI: 한도 도달 시 review → limit → hold
-        AI->>MQ: COMPLETED (보류)
-        MQ->>BE: AgentEventService.handle
-        BE->>BE: RequestWorkflow.sendToHumanReview (AGENT_NEEDS_HUMAN · RETRY_LIMIT)
-    else 인용 근거 재검증 실패
-        MQ->>BE: COMPLETED (배정 제안)
-        BE->>BE: EvidenceValidator.findProblems (문제 발견)
-        BE->>BE: RequestWorkflow.sendToHumanReview (VALIDATION_FAILED)
-    else AI 실패 · 시간 초과 · 메시지 처리 실패
-        AI->>MQ: FAILED
-        MQ->>BE: AgentEventService.handle → sendToHumanReview (SYSTEM_ERROR)
-        BE->>BE: AgentTimeoutJob.expireStaleRuns (5분 넘김) → SYSTEM_ERROR
-        MQ->>BE: RunDeadLetterListener.onDeadRun (DLQ) → SYSTEM_ERROR
-    end
-    관리자->>FE: 사람 검토 목록에서 판단
-    FE->>BE: POST /api/v1/reviews/{id}/resolve (수동 배정 · 종결)
-```
+<p align="center"><img src="sequence-failure.png" width="1000" alt="실패 처리 시퀀스: 접수 보완, 재조사 한도, 근거 재검증 실패, AI 실패·시간 초과"></p>
 
 | 실패 | 어디서 막나 | 결과 |
 |:--|:--|:--|
@@ -207,23 +95,7 @@ sequenceDiagram
 
 AI 서버는 LangGraph로 판단 단계를 그래프로 연결합니다. 단계마다 상태(State)를 체크포인트에 저장해, 서버가 재시작돼도 멈춘 단계부터 이어 갑니다.
 
-```mermaid
-flowchart TD
-    S(["시작"]) --> C1["classification_started"] --> CL["classify<br/>LLM1 이력 비교"]
-    CL -- "근거 확인" --> DR["direct<br/>바로 배정 제안"]
-    CL -- "근거 부족" --> I1["investigation_started"]
-    CL -- "판단 불가" --> HO["hold<br/>사람 검토"]
-    I1 --> INV["investigate<br/>LLM2 독립 조사<br/>(InvestigatorState만 입력)"]
-    INV --> MG["merge_for_review<br/>요청·버전·범위·스냅샷 검사"]
-    MG --> R1["review_started"] --> RV["review<br/>LLM3 판단·근거 대조"]
-    RV -- "PASS / HUMAN" --> FI["finalize<br/>PASS: 근거 검증·참고 AMM<br/>HUMAN: 사람 검토 결과"]
-    RV -- "재조사" --> INC["increment"] --> I1
-    RV -- "재조사 한도(2회)" --> LM["limit"] --> HO
-    RV -- "내부 hold 있음" --> HO
-    DR --> DONE(["completed"])
-    FI --> DONE
-    HO --> DONE
-```
+<p align="center"><img src="langgraph-flow.png" width="640" alt="LangGraph 노드 흐름: classify, investigate, review, finalize"></p>
 
 | 노드 | 하는 일 |
 |:--|:--|
