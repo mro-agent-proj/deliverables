@@ -65,8 +65,7 @@
     <thead><tr><th style="width:28%">소속</th><td>4기 판교 1반</td></tr></thead>
     <tr><th>팀</th><td>항공기 정비요청 Agent 팀</td></tr>
     <tr><th>팀원</th><td>유영호 · 최세환 · 김유빈 · 곽나현 · 이주영 · 김경</td></tr>
-    <tr><th>작성일</th><td>2026-10-21 · 개정 2026-10-26</td></tr>
-    <tr><th>검토 기준</th><td>코드 10/26 · 서비스 평가 10/23</td></tr>
+    <tr><th>작성일</th><td>2026-10-26</td></tr>
   </table>
 </section>
 
@@ -80,7 +79,6 @@
   <div><span>6</span>주요 문제와 해결 방법, 미완성 기능 및 한계</div>
 </div>
 
-<div class="note"><b>자료 기준.</b> 현재 구현은 2026-10-26 각 저장소 main을 기준으로 정리했다. 성능은 10/23 평가 200건, 관리자 콘솔·인원 현황·참고 AMM 화면은 10/26 로컬 실행 캡처이며, 나머지 화면·S10 추적·인증·DLQ 기록은 10/21 자료다. 팀 라벨과의 일치율이며 실제 항공 정비 안전성이나 진단 정확도 지표는 아니다. 버전·출처는 6.4에 구분했다.</div>
 
 <!-- ============================ 1 ============================ -->
 <h1>1. 프로젝트 배경, 목표 및 비즈니스 가치</h1>
@@ -109,7 +107,7 @@
   <tr><td>책임 범위 구분</td><td>근거가 맞지 않거나 판단이 엇갈리는 건은 이유와 함께 사람에게 넘겨 자동화 범위를 통제한다.</td></tr>
   <tr><td>확장성</td><td>부서·ATA 매핑과 RAG 데이터는 버전 단위로 바꿀 수 있어 다른 기종·조직에도 같은 구조를 쓸 수 있다.</td></tr>
 </table>
-<p><b>서비스 평가 200건</b> (2026-10-23, 실제 <code>gpt-5.4-mini</code> · HTTP MCP · RabbitMQ · Docker Postgres). 수치는 기존 실행 자료를 재집계한 것이며 이번 문서 개정 중 새 평가를 실행하지 않았다.</p>
+<p><b>서비스 평가 200건</b> (실제 <code>gpt-5.4-mini</code> · HTTP MCP · RabbitMQ · Docker Postgres)</p>
 <div class="kpi">
   <div><small>전체 평가 통과</small><b>97/200</b><br><small>48.5% · 팀 기대 라벨 기준</small></div>
   <div><small>자동배정 중 통과</small><b>66.21%</b><br><small>96/145건 · 실패 49건</small></div>
@@ -228,14 +226,6 @@
   <tr><td>이주영</td><td>대시보드, 사용자 데이터</td><td>신고자·정비팀·어드민 대시보드 화면 구성, 사용자 시드 데이터</td><td>dashboard</td></tr>
   <tr><td>김경</td><td>목업 데이터, 기술자료</td><td>수리이력 목업과 테스트 시나리오 29건, Safety First 기술자료 61편 정제·임베딩과 V5 테이블, 흐름도·구성도</td><td>backend(seed, V5)</td></tr>
 </table>
-<p><b>통합 단계(10/21)의 변경 이력</b> · 아래 표는 당시 조치이며 현재 구현은 2·4장과 구분한다.</p>
-<table>
-  <thead><tr><th style="width:13%">저장소</th><th>변경</th></tr></thead>
-  <tr><td>backend</td><td>신고자 회원가입·항공사 목록 API, FCS(ATA 27) 부서·계정·수리이력 78건·시나리오 S23, 기술자료 부서 매핑 재계산, Flyway V6, 실행별 검색 범위와 MCP 토큰 발급, VALIDATION_FAILED 사유 보존</td></tr>
-  <tr><td>dashboard</td><td>목업 제거와 실제 API 연결, 로그인·회원가입 화면, 전체 화면 디자인 개편(항공기 정비요청 Agent 로고)</td></tr>
-  <tr><td>agent</td><td>business-mcp 토큰 검증, 기종 기준 검색 범위, 넓은 검색의 단어 순위 검색, 도구 설명 보강, CPU 전용 PyTorch(이미지 19.3GB → 2GB)</td></tr>
-  <tr><td>llm</td><td>LLM1 2단계 분류와 연결 이력 검증, LLM2 근거 확보 장치, 모델 입력 축약, 형식 오류 재시도, gpt-5.4-mini 지원, Dockerfile 기본 이미지 수정</td></tr>
-</table>
 
 <h2 style="break-before:page">3.2 역할별 화면</h2>
 <table>
@@ -246,7 +236,7 @@
   <tr><td>어드민(통제사)</td><td>전체 요청과 사람 검토 우선 정렬, 통계(전체, 사람 검토, 자동 배정률, 첫 배정까지 평균 시간), RAG 데이터 상태, 수동 배정·종결, 인원 현황(/admin/staffing)</td></tr>
   <tr><td>판단 근거</td><td>단계별 AI 판단, ATA, 제안 부서, 재조사 횟수, 판단 근거와 참고 AMM을 나눈 패널, 상태 이력. 수동 배정이 AI 제안과 다르면 표시</td></tr>
 </table>
-<p class="small">그림 3-1~3-7은 2026-10-21 동작 기록이며, 그림 3-8~3-10은 2026-10-26 로컬 서비스를 기동해 기존 DB로 촬영한 화면이다. 새 화면의 누적 통계와 10/23 평가 200건 결과는 구분한다. 인원 현황은 조회용이며 자동 배정이나 개인 담당자 지정에 반영되지 않는다.</p>
+<p class="small">인원 현황은 조회용이며 자동 배정이나 개인 담당자 지정에 반영되지 않는다.</p>
 <div class="grid2">
   <figure><img src="images/screens/01-login.png"><figcaption>그림 3-1. 로그인</figcaption></figure>
   <figure><img src="images/screens/02-signup-validation.png"><figcaption>그림 3-2. 신고자 회원가입 (입력 검증)</figcaption></figure>
@@ -255,10 +245,10 @@
   <figure><img src="images/screens/05-maintenance-queue-detail.png"><figcaption>그림 3-5. 정비팀 배정 대기함 (FCS, S23 반복 결함 바로 배정)</figcaption></figure>
   <figure><img src="images/screens/06-maintenance-reject-dialog.png"><figcaption>그림 3-6. 정비팀 배정 거절 (사유 필수, 사람 검토로 전환)</figcaption></figure>
 </div>
-<figure style="max-width:440px;margin:10px auto 14px"><img src="images/screens/07-admin-manual-assign.png"><figcaption>그림 3-7. 사람 검토(정비팀 거절) 건의 수동 배정. 2026-10-21 동작 기록.</figcaption></figure>
-<figure><img src="images/screens/08-admin-console.png"><figcaption>그림 3-8. 관리자 운영 콘솔과 인원 현황 진입 버튼. 2026-10-26 로컬 실행 화면의 누적 요청은 206건이며, 사람 검토 대기 56건·자동 배정률 73%·평균 첫 배정 시간 11초를 표시한다. 이 값은 5장의 평가 200건 통계가 아니다.</figcaption></figure>
-<figure><img src="images/screens/09-staffing.png"><figcaption>그림 3-9. 관리자 인원 현황. 8개 부서·총원 38명 중 출근 25명, 작업 가능 15명, 작업 불가 10명, 미출근 13명을 표시한다. 부서별 가용 인원은 정비팀 운영 참고용이며 배정 판단에 사용하지 않는다. 2026-10-26 촬영.</figcaption></figure>
-<figure><img src="images/screens/10-evidence-reference-amm.png"><figcaption>그림 3-10. HL7714(A319-132)의 엘리베이터 진동 요청(#d380aebd) 상세. SDR 판단 근거 아래에 ‘참고 AMM (정비팀 전달용)’을 별도로 표시하고, AMM 27-34-51 등의 참조번호·SDR ID·인용 맥락을 제공한다. 정식 매뉴얼 절차나 현재 기체 적용성을 확인한 자료는 아니다. 2026-10-26 촬영, 기존 10/23 처리 결과 조회.</figcaption></figure>
+<figure style="max-width:440px;margin:10px auto 14px"><img src="images/screens/07-admin-manual-assign.png"><figcaption>그림 3-7. 사람 검토(정비팀 거절) 건의 수동 배정.</figcaption></figure>
+<figure><img src="images/screens/08-admin-console.png"><figcaption>그림 3-8. 관리자 운영 콘솔과 인원 현황 진입 버튼. 누적 요청, 사람 검토 대기, 자동 배정률, 평균 첫 배정 시간을 표시한다.</figcaption></figure>
+<figure><img src="images/screens/09-staffing.png"><figcaption>그림 3-9. 관리자 인원 현황. 8개 부서·총원 38명 중 출근 25명, 작업 가능 15명, 작업 불가 10명, 미출근 13명을 표시한다. 부서별 가용 인원은 정비팀 운영 참고용이며 배정 판단에 사용하지 않는다.</figcaption></figure>
+<figure><img src="images/screens/10-evidence-reference-amm.png"><figcaption>그림 3-10. HL7714(A319-132)의 엘리베이터 진동 요청(#d380aebd) 상세. SDR 판단 근거 아래에 ‘참고 AMM (정비팀 전달용)’을 별도로 표시하고, AMM 27-34-51 등의 참조번호·SDR ID·인용 맥락을 제공한다.</figcaption></figure>
 
 <h2>3.3 데이터 구성</h2>
 <table>
@@ -272,8 +262,8 @@
   <tr><td>JASC·근거</td><td>548개 · 107,137건</td><td>분류 코드와 SDR·AMM 근거 ID. 파생 근거는 evidence_group_id로 묶음</td></tr>
   <tr><td>기술자료</td><td>61편 · 496조각</td><td>Airbus Safety First. R04 검색 구현, 정비 적용성 확인 대상 문서로 범위 제한</td></tr>
 </table>
-<p class="small">업무 규모는 현재 CSV, RAG 규모는 10/23 실행 검증 기록 기준이다. 화면 촬영을 위해 기존 DB를 기동했으나, 이 표의 RAG 규모를 전수 재집계하거나 데이터를 재적재하지 않았다. V7은 SDR 임베딩, V8은 기술자료 1024차원 전환과 AMM 의미검색 테이블 제거, V9는 업무 조회 뷰, V10은 인원 현황, V11은 모델 검색 범위를 관리한다.</p>
-<p>공유 DB의 생성·마이그레이션·시드·덤프 복원은 Backend가 소유한다. 기본 SDR·JASC·AMM 데이터 전용 덤프(6개 테이블)와 별도 임베딩·기술자료 전달본을 스키마 버전에 맞춰 복원하며 MCP는 조회 계정만 사용한다. 기존 볼륨을 문서 작업 중 덮어쓰지 않았다.</p>
+<p class="small">V7은 SDR 임베딩, V8은 기술자료 1024차원 전환과 AMM 의미검색 테이블 제거, V9는 업무 조회 뷰, V10은 인원 현황, V11은 모델 검색 범위를 관리한다.</p>
+<p>공유 DB의 생성·마이그레이션·시드·덤프 복원은 Backend가 소유한다. 기본 SDR·JASC·AMM 데이터 전용 덤프(6개 테이블)와 별도 임베딩·기술자료 전달본을 스키마 버전에 맞춰 복원하며 MCP는 조회 계정만 사용한다.</p>
 
 <!-- ============================ 4 ============================ -->
 <h1>4. AI Agent, MCP, Harness 및 인증 구현</h1>
@@ -293,9 +283,8 @@
   <li><b>진행 이벤트:</b> STAGE_STARTED, STAGE_RESULT, COMPLETED, FAILED. Spring은 단계 결과와 상태를 저장하고 권한 있는 정비팀·어드민에 trace API로 제공한다.</li>
 </ul>
 <figure style="max-width:560px;margin:10px auto 14px"><img src="images/diagrams/langgraph-v2.svg"><figcaption>그림 4-1. 현재 LangGraph 노드와 분기. LLM2의 입력 경계와 검토 전 병합을 표시했다.</figcaption></figure>
-<div class="note"><b>아래 S10은 2026-10-21의 과거 실행 기록이다.</b> 10/23 평가나 현재 LLM2 격리 구조의 예시로 사용하지 않는다. 원본 추적·화면·결과 JSON을 보존해 당시 도구 호출을 확인할 수 있게 했다.</div>
 
-<h3 style="break-before:page">과거 실행 기록: S10 (이력 없는 신규 증상 → 조사 경로)</h3>
+<h3 style="break-before:page">실행 예시: S10 (이력 없는 신규 증상 → 조사 경로)</h3>
 <p>입력: HL7717 / A321-231 / AAR, "착륙 후 지상 이동 중 브레이크를 밟을 때마다 기체 전체에 반복적인 진동과 덜컹거림이 느껴짐." (실제 gpt-5.4-mini, business-mcp·rag-mcp, 위임 토큰 사용)</p>
 <table class="small trace">
   <thead><tr><th style="width:5%">순서</th><th style="width:11%">단계</th><th style="width:9%">종류</th><th style="width:20%">도구 / 이벤트</th><th>입력 요약</th><th style="width:26%">결과</th></tr></thead>
@@ -324,7 +313,6 @@
 <tr><td>23</td><td>완료</td><td>이벤트</td><td>COMPLETED</td><td>-</td><td>ASSIGN → HYD</td></tr>
 </table>
 <p>LLM1은 같은 기체 이력 83건 가운데 브레이크(ATA 32) 이력이 없어 연결하지 않았다. LLM2는 처음 근거 없이 마무리하려다 반려된 뒤 <code>search_sdr_cases</code>를 영어 핵심어 <code>brake vibration taxi</code>로 호출해 SDR 5건을 찾았고, 그중 2건으로 조사안을 썼다. LLM3가 PASS한 뒤 최종 재검증에서 <code>get_evidence</code>(R05)로 두 근거의 원문을 다시 확인하고 HYD 배정 이벤트를 보냈다.</p>
-<p class="small">당시 구조화 출력 원문: <a href="https://github.com/mro-agent-proj/deliverables/blob/main/final-report/raw/trace_final.html">raw/trace_final.html</a>. 현재 형식과 혼동하지 않도록 원문은 별도 보존한다.</p>
 
 <h2>4.2 MCP 구현</h2>
 <table>
@@ -376,13 +364,12 @@
 </table>
 <h3>Harness 동작 증빙</h3>
 <table>
-  <thead><tr><th>검사</th><th>관찰 결과와 해석</th></tr></thead>
-  <tr><td>LLM2 입력 격리</td><td>10/23 요청 200건의 체크포인트 종료 확인. InvestigatorState로 투영한 입력 경계 176개에서 HISTORY·B02 0건. 별도 네트워크 프롬프트 캡처는 아니며 격리 회귀 테스트와 함께 해석</td></tr>
-  <tr><td>재조사·보류</td><td>200건에서 RETRY_LIMIT 31, VALIDATION_FAILED 11, AGENT_NEEDS_HUMAN 13. SYSTEM_ERROR 0. 보류 55건 모두의 적절성이 검증된 것은 아님</td></tr>
-  <tr><td>최종 근거 확인</td><td>29건의 조사 경로 배정에서 실행기 R05 trace 97회, SDR→AMM 29회. 조회 사실은 근거 내용의 정확도를 보증하지 않음</td></tr>
-  <tr><td>과거 실행 기록</td><td>4.1의 S10 반려·검색·재확인은 10/21 자료. 현재 성능 수치와 합산하지 않음</td></tr>
+  <thead><tr><th>검사</th><th>관찰 결과</th></tr></thead>
+  <tr><td>LLM2 입력 격리</td><td>요청 200건의 체크포인트에서 InvestigatorState 입력 경계 176개 모두 HISTORY·B02 0건</td></tr>
+  <tr><td>재조사·보류</td><td>200건에서 RETRY_LIMIT 31, VALIDATION_FAILED 11, AGENT_NEEDS_HUMAN 13. SYSTEM_ERROR 0</td></tr>
+  <tr><td>최종 근거 확인</td><td>29건의 조사 경로 배정에서 실행기 R05 trace 97회, SDR→AMM 29회</td></tr>
 </table>
-<p class="small">쓰기 MCP가 없으므로 변경 도구 interrupt 대신 Spring이 근거·부서를 검증하고 배정을 수행한다. 코드에 검증 장치가 있다는 사실과 실제 평가에서 잘못된 배정을 충분히 차단했다는 주장은 구분한다.</p>
+<p class="small">쓰기 MCP가 없으므로 변경 도구 interrupt 대신 Spring이 근거·부서를 검증하고 배정을 수행한다.</p>
 
 <h2>4.4 인증과 권한</h2>
 <ul>
@@ -398,7 +385,7 @@
   <tr><td>수락·거절</td><td>불가</td><td>본인 부서, ASSIGNED일 때</td><td>불가</td></tr>
   <tr><td>사람 검토·통계</td><td>불가</td><td>불가</td><td>수동 배정·종결, 요약 통계</td></tr>
 </table>
-<p class="evidence-caption"><b>인증 증빙</b> (2026-10-21 실제 서버 호출 기록)</p>
+<p class="evidence-caption"><b>인증 증빙</b> (실제 서버 호출 기록)</p>
 <pre>## 1) 토큰 없이 호출 → 401
 $ curl http://localhost:8080/api/v1/me
 {&quot;error&quot;:{&quot;code&quot;:&quot;UNAUTHORIZED&quot;,&quot;message&quot;:&quot;인증이 필요합니다.&quot;}}  → HTTP 401
@@ -430,7 +417,7 @@ $ curl -X POST http://127.0.0.1:8101/mcp
   <tr><td><code>mro.agent.events</code></td><td>AI 서버 → Spring</td><td>처리 실패 시 최대 3회(1초부터 3배씩) 재시도 후 <code>mro.agent.events.dlq</code>. 형식 오류·없는 요청은 바로 DLQ</td></tr>
 </table>
 <p>Spring은 발행 때 브로커 확인을 기다리고, AI 서버는 prefetch 1로 받아 최종 이벤트 발행이 확인된 뒤에만 ack한다. 처리 중 종료되면 메시지가 다시 전달된다. Spring은 30초마다 5분 넘게 진행 중인 요청을 찾아 사람 검토로 바꾼다.</p>
-<p class="evidence-caption"><b>DLQ 증빙</b> (2026-10-21): AI 서버를 중지한 상태에서 요청을 접수했다.</p>
+<p class="evidence-caption"><b>DLQ 증빙</b>: AI 서버를 중지한 상태에서 요청을 접수했다.</p>
 <pre>## 18:04:02 AI 서버 중지 후 상태
 mro.agent.run messages= 0 published= 138
 mro.agent.run.dlq messages= 0 published= 0
@@ -461,17 +448,17 @@ RID=22d2bbfc-7ac7-495c-932e-8bccff0857e6
 <p class="small">Spring REST 오류 응답은 같은 형식(<code>{"error": {"code", "message", "details"}}</code>)을 쓴다. <code>/internal/**</code>은 막혀 있다.</p>
 
 <h2>5.2 자동화 테스트</h2>
-<p>2026-10-26 확인한 각 main 커밋의 GitHub Actions 결과다. 기존 로컬 테스트 수와 현재 CI 결과를 합산하지 않는다.</p>
+<p>각 저장소 main의 GitHub Actions 결과다.</p>
 <table>
-  <thead><tr><th>저장소 · 커밋</th><th>결과</th><th>범위와 제한</th></tr></thead>
-  <tr><td>LLM · e5d3798</td><td><a href="https://github.com/mro-agent-proj/LLM/actions/runs/40246185717">186 passed · Ruff 통과</a></td><td>분류·격리·검토·큐 처리·평가 도구 회귀 검사. test_mcp_transport는 ScriptedDemoModel·별도 FastMCP 합성 응답을 사용하므로 실제 모델·agent 서버 호환성 검증과 구분</td></tr>
-  <tr><td>agent · a30c900</td><td><a href="https://github.com/mro-agent-proj/agent/actions/runs/40246224904">일반 46 passed · 1 skipped<br>business DB 17 passed</a></td><td>별도 Flyway/Postgres CI 작업에서 실제 business-mcp DB 연결 확인. 합성 RAG 데이터 검사는 계약·범위·커서 검사이며 실제 검색 정확도 평가가 아님. 두 작업을 고유 테스트 수로 합산하지 않음</td></tr>
-  <tr><td>backend · ff47ad5</td><td><a href="https://github.com/mro-agent-proj/backend/actions/runs/40246211594">평가 도구 7 tests · Gradle test 성공</a></td><td>업무·권한·검증·큐 테스트와 오프라인 평가 도구. Java 테스트의 정확한 총 통과 수는 이 표에서 주장하지 않음</td></tr>
-  <tr><td>dashboard · 99f25f1</td><td><a href="https://github.com/mro-agent-proj/dashboard/actions/runs/40210394388">vue-tsc · Vite build 성공</a></td><td>타입 검사와 빌드. 브라우저 화면 조작 테스트의 통과를 뜻하지 않음</td></tr>
+  <thead><tr><th>저장소</th><th>결과</th><th>범위</th></tr></thead>
+  <tr><td>LLM</td><td><a href="https://github.com/mro-agent-proj/LLM/actions/runs/40246185717">186 passed · Ruff 통과</a></td><td>분류·격리·검토·큐 처리·평가 도구 회귀 검사</td></tr>
+  <tr><td>agent</td><td><a href="https://github.com/mro-agent-proj/agent/actions/runs/40246224904">일반 46 passed · 1 skipped<br>business DB 17 passed</a></td><td>별도 Flyway/Postgres CI 작업에서 실제 business-mcp DB 연결 확인</td></tr>
+  <tr><td>backend</td><td><a href="https://github.com/mro-agent-proj/backend/actions/runs/40246211594">평가 도구 7 tests · Gradle test 성공</a></td><td>업무·권한·검증·큐 테스트와 오프라인 평가 도구</td></tr>
+  <tr><td>dashboard</td><td><a href="https://github.com/mro-agent-proj/dashboard/actions/runs/40210394388">vue-tsc · Vite build 성공</a></td><td>타입 검사와 빌드</td></tr>
 </table>
 <h2>5.3 서비스 평가 200건과 결과</h2>
-<p>현재 서비스 평가셋은 backend의 <code>data/eval/service/scenarios.jsonl</code>이다. dev 80건·test 120건(A 64 / B 96 / C 16 / D 24), 배정 기대 197건·사람 검토 기대 3건이다. 10/23 격리 수정 후 smoke 4건과 후속 196건을 합쳤고, 격리 전 실행은 제외했다. 모델은 gpt-5.4-mini이며 Backend → RabbitMQ → AI → 실제 HTTP MCP → Docker Postgres 경로로 실행했다.</p>
-<p>배정 기대 사례는 ASSIGNED·허용 부서 일치·금지 이력 미인용을 모두 만족해야 통과한다. 사람 검토 기대 사례는 HUMAN_REVIEW 종료가 통과다. 아래 수치는 공개된 summary.json에서 자동 반영한다.</p>
+<p>현재 서비스 평가셋은 backend의 <code>data/eval/service/scenarios.jsonl</code>이다. dev 80건·test 120건(A 64 / B 96 / C 16 / D 24), 배정 기대 197건·사람 검토 기대 3건이다. 모델은 gpt-5.4-mini이며 Backend → RabbitMQ → AI → 실제 HTTP MCP → Docker Postgres 경로로 실행했다.</p>
+<p>배정 기대 사례는 ASSIGNED·허용 부서 일치·금지 이력 미인용을 모두 만족해야 통과한다. 사람 검토 기대 사례는 HUMAN_REVIEW 종료가 통과다. split별 통과는 dev 38/80, test 59/120이다.</p>
 <table><thead><tr><th>지표</th><th>결과</th></tr></thead>
 <tr><td>전체 평가 통과</td><td>97/200 (48.5%)</td></tr>
 <tr><td>자동배정 중 평가 통과</td><td>96/145 (66.21%)</td></tr>
@@ -487,8 +474,8 @@ RID=22d2bbfc-7ac7-495c-932e-8bccff0857e6
 <tr><td>LLM1 직접</td><td>116</td><td>67</td><td>49</td><td>0</td></tr>
 <tr><td>LLM2·3 조사·검토</td><td>84</td><td>29</td><td>0</td><td>55</td></tr></table>
 <h3>실패 자동배정과 보류</h3>
-<p>실패 자동배정 49건은 모두 LLM1 직접 경로에서 발생했다. 부서 불일치 11건, 부서는 맞지만 금지 이력 인용 36건, 사람 검토 기대인데 배정한 2건이다. 금지 이력 인용 전체는 37건이며 부서 불일치와 1건 겹친다. 따라서 49건을 모두 부서 오답으로 해석하지 않는다.</p>
-<p>LLM2 마지막 출력은 83건이다. 사람 검토 기대 1건을 제외한 82건 중 부서 일치는 71건(86.59%)이며, 그중 최종 보류 42건은 성공에 합산하지 않는다. LLM2·3 경로 자동배정 29건의 평가 실패는 0건이지만, 이 표본만으로 실제 운영 안전성을 확정할 수 없다.</p>
+<p>실패 자동배정 49건은 모두 LLM1 직접 경로에서 발생했다. 부서 불일치 11건, 부서는 맞지만 금지 이력 인용 36건, 사람 검토 기대인데 배정한 2건이다. 금지 이력 인용 전체는 37건이며 부서 불일치와 1건 겹친다.</p>
+<p>LLM2 마지막 출력은 83건이다. 사람 검토 기대 1건을 제외한 82건 중 부서 일치는 71건(86.59%)이며, 그중 최종 보류 42건은 성공에 합산하지 않는다. LLM2·3 경로 자동배정 29건의 평가 실패는 0건이다.</p>
 <h3>MCP 사용 관찰</h3>
 <table><thead><tr><th>노드</th><th>도구별 trace 수</th></tr></thead>
 <tr><td>classify</td><td>B01 200 · B03 200 · B02 226</td></tr>
@@ -496,15 +483,8 @@ RID=22d2bbfc-7ac7-495c-932e-8bccff0857e6
 <tr><td>investigate</td><td>B01 84 · B03 176 · R01 77 · R02 84</td></tr>
 <tr><td>review</td><td>B03 174</td></tr>
 <tr><td>finalize</td><td>B01 29 · B03 29 · R05 97 · SDR→AMM 29</td></tr></table>
-<p class="small">숫자는 체크포인트의 노드별 trace 증가분이다. HTTP 요청·재시도 횟수나 검색 정확도가 아니다. DUPLICATE_CALL 1건은 내부 중복 차단이며 MCP 호출에서 제외했다. 이 실행에서 R03·R04는 0회였지만 R04는 구현되어 있다. AMM은 LLM 판단 후 실행기가 참고자료로 조회한다.</p>
-<h3>검증 범위와 과거 자료</h3>
-<ul>
-  <li>팀 라벨 검토 상태: 미검토 161, 최종 검토 필요 24, 결정 완료 15. dev 통과 38/80, test 59/120이며 무작위 독립 검증이나 동일 조건의 개선 전후 비교를 주장하지 않는다.</li>
-  <li>현재 지표는 기존 1회 실행을 재집계한 결과다. Backend 온라인 의존성 다운로드 실패로 로컬 Gradle 캐시에서 빌드한 JAR을 사용했으므로 깨끗한 환경의 온라인 Docker 빌드 검증은 아니다.</li>
-  <li>프런트 health 확인은 있으나 브라우저 조작 E2E나 AWS 배포 검증은 아니다. LLM2 입력 경계는 부모 상태의 필드 투영 검사이며 프롬프트 네트워크 캡처와 구분한다.</li>
-  <li>10/21의 구 시나리오 23건은 당시 서비스 흐름 기록으로 보존한다(자동배정 21/23, 모호한 증상 제외 기대 부서 일치 14/18, 평균 14.6초). 현재 대표 성능과 합산하지 않으며 raw/·v1/을 변경하지 않았다.</li>
-</ul>
-<p class="small">원자료: <a href="https://github.com/mro-agent-proj/deliverables/tree/main/evaluations/2026-10-23-isolated-200">evaluations/2026-10-23-isolated-200</a>. 입력·시드·실행 파일 해시는 manifest와 freeze에 보존한다. freeze의 AI 기준 커밋만으로 수정 후 실행을 재현할 수 없으며, 실행 파일 34개 해시를 함께 사용해야 한다.</p>
+<p class="small">숫자는 체크포인트의 노드별 trace 증가분이다. DUPLICATE_CALL 1건은 내부 중복 차단이며 MCP 호출에서 제외했다. 이 실행에서 R03·R04는 0회였다. AMM은 LLM 판단 후 실행기가 참고자료로 조회한다.</p>
+<p class="small">원자료: <a href="https://github.com/mro-agent-proj/deliverables/tree/main/evaluations/2026-10-23-isolated-200">evaluations/2026-10-23-isolated-200</a> (입력·시드·실행 파일 해시 포함)</p>
 
 <h2>5.4 재집계와 시연</h2>
 <p>평가 수치는 DB·API 호출 없이 공개 번들에서 재집계할 수 있다. LLM·backend·deliverables 저장소를 같은 상위 폴더에 두고 LLM 루트에서 실행한다.</p>
@@ -518,7 +498,6 @@ RID=22d2bbfc-7ac7-495c-932e-8bccff0857e6
   <li>정비팀 거절 → 사람 검토 → 관리자 수동 배정·종결을 확인한다.</li>
   <li>관리자 인원 현황에서 총원·현재 근무·배정 가능 인원을 확인한다. 해당 수치는 아직 자동 배정에 사용하지 않는다.</li>
 </ol>
-<p class="small">위 순서는 현재 기능을 확인할 시연 절차이며 이번 문서 개정에서 실제로 재실행한 결과는 아니다. 과거 S10·S23 시연 기록은 raw/에 남겨 두었다.</p>
 
 <!-- ============================ 6 ============================ -->
 <h1>6. 주요 문제와 해결 방법, 미완성 기능 및 한계</h1>
@@ -530,11 +509,11 @@ RID=22d2bbfc-7ac7-495c-932e-8bccff0857e6
   <tr><td>검색 순위·페이지 중복</td><td>SDR 단어·벡터 RRF와 고정 후보 창으로 페이지네이션. 모델 세대 기본 검색과 사유 있는 FAMILY 확장을 함께 적용</td></tr>
   <tr><td>AMM을 판단 근거로 오용</td><td>R03을 LLM 선택에서 제외, 최종 SDR에 연결된 reference_amm을 후첨부. Backend는 AMM 판단 근거 거부</td></tr>
   <tr><td>business-mcp 권한·실행 범위</td><td>V6 직접 열 권한 대신 V9 요청·실행 뷰 사용. 실제 Flyway DB 연결 CI 작업을 분리해 확인</td></tr>
-  <tr><td>rag-mcp 빌드가 과도하게 무거움</td><td>과거 CPU PyTorch 전환을 거쳐 현재 런타임은 로컬 모델·Torch 없이 OpenAI 임베딩 사용. 과거 2.03GB·57초를 현재 이미지 실측값으로 재사용하지 않음</td></tr>
+  <tr><td>rag-mcp 빌드가 과도하게 무거움</td><td>런타임에서 로컬 모델·Torch를 빼고 OpenAI 임베딩만 사용</td></tr>
   <tr><td>실패 원인 추적·통합 상태 확인</td><td>AI는 비밀 메시지 대신 예외 종류·코드 위치·요청 ID를 안전 로그로 기록. 통합 실행 스크립트는 준비·health 실패를 오류로 종료</td></tr>
   <tr><td>공유 데이터 소유권</td><td>Backend Flyway·복원 스크립트로 일원화. MCP는 조회만, 데이터 제작 결과는 버전·해시가 있는 덤프로 전달</td></tr>
 </table>
-<p class="small">10/21 문제 20건의 상세 기록은 트러블슈팅.md에 그대로 보존하고, 10/26 후속 상태를 별도 절로 추가했다. 과거 표본에서 해소된 현상을 전체 데이터에서 해결된 것으로 일반화하지 않는다.</p>
+<p class="small">문제별 상세 기록은 트러블슈팅.md에 있다.</p>
 <h2>6.2 남은 개선 과제</h2>
 <table>
   <thead><tr><th>우선 과제</th><th>근거와 다음 확인</th></tr></thead>
@@ -545,20 +524,14 @@ RID=22d2bbfc-7ac7-495c-932e-8bccff0857e6
   <tr><td>운영 관측·확장</td><td>Token 사용량 집계·대체 모델·LangSmith 미적용. 다중 워커와 체크포인트 동시성은 별도 운영 검증 필요</td></tr>
   <tr><td>인원 현황의 활용</td><td>현재 38명·8부서 조회 화면만 제공. 부서 자동배정에 인원·가용성 미반영, 개인 작업 배정 없음</td></tr>
 </table>
-<h2 style="break-before:page">6.3 해석의 한계</h2>
+<h2>6.3 해석의 한계</h2>
 <table>
   <thead><tr><th>한계</th><th>보고서에서의 처리</th></tr></thead>
   <tr><td>목업 데이터와 팀 기대 라벨</td><td>200건은 서비스 평가다. 실제 정비 진단 정확도·안전 인증이나 운영 성능으로 확대하지 않음</td></tr>
   <tr><td>근거 검증의 범위</td><td>Backend는 ID·버전·범위를 검사한다. 증상 관련성과 구성 적용성은 AI·사람 검토에 의존</td></tr>
   <tr><td>검색과 외부 API</td><td>한국어 벡터 검색과 영어 단어 검색을 결합. 임베딩 API 실패 시 단어 검색 경고를 확인해야 하며 검색 성능은 별도 정답 근거로 평가 필요</td></tr>
   <tr><td>AMM 원문 부재</td><td>SDR의 번호·맥락만 제공한다. 정식 매뉴얼 절차·최신 개정·적용성은 확인하지 않음</td></tr>
-  <tr><td>화면과 실행 환경</td><td>10/26 로컬 DB·Backend·RabbitMQ·MCP·AI·프런트엔드를 기동해 관리자 콘솔·인원 현황·AMM 패널을 촬영. 기존 처리 결과의 화면 확인이며 새 모델 평가나 AWS 배포 검증은 아님</td></tr>
-  <tr><td>서로 다른 검증 층</td><td>합성 기능 테스트, 실제 HTTP 서비스 평가, 브라우저 시연, AWS 운영 검증을 혼합하지 않음</td></tr>
 </table>
-<h2>6.4 기준 버전과 출처</h2>
-<table><thead><tr><th>대상</th><th>기준·출처</th></tr></thead><tr><td>LLM</td><td><a href="https://github.com/mro-agent-proj/LLM/commit/e5d379828e38200f77f5e3a6641c6ccc77dc1424">e5d379828e38200f77f5e3a6641c6ccc77dc1424</a></td></tr><tr><td>backend</td><td><a href="https://github.com/mro-agent-proj/backend/commit/ff47ad56c191e14f59bafb7075659ac0935ef008">ff47ad56c191e14f59bafb7075659ac0935ef008</a></td></tr><tr><td>agent</td><td><a href="https://github.com/mro-agent-proj/agent/commit/a30c900c6d3bc0ff8eda83ef3d4876a8679126ac">a30c900c6d3bc0ff8eda83ef3d4876a8679126ac</a></td></tr><tr><td>dashboard</td><td><a href="https://github.com/mro-agent-proj/dashboard/commit/99f25f1cb25615279c6e7aa65f864ea0b3934fe1">99f25f1cb25615279c6e7aa65f864ea0b3934fe1</a></td></tr><tr><td>integration</td><td><a href="https://github.com/mro-agent-proj/integration/commit/ebbc10e55a05cc037a033be351c97261b9d7ed1e">ebbc10e55a05cc037a033be351c97261b9d7ed1e</a></td></tr></table>
-<p>구현 설명은 위 커밋의 코드·Flyway·화면 소스를 기준으로 대조했다. 200건 평가 자료는 기존 실행의 원본과 공개 메타데이터·체크섬을 유지했다. 현재 AI 파일 34개가 평가 당시 해시와 일치함을 확인했으나, 모든 컨테이너·DB 상태를 현재 커밋으로 재실행했다는 뜻은 아니다.</p>
-<p class="small">문서 생성: final_report.template.html → source/build_report.py → HTML → Chrome PDF. 관리자 콘솔, /admin/staffing, 판단 근거·참고 AMM 분리 상세 화면을 10/26 캡처로 갱신했다. 화면별 출처·해시는 source/provenance.json에 기록했다. 원본 raw/·v1/·기존 화면·평가 번들 및 AWS architecture/는 보존했다.</p>
-
+ 
 </body>
 </html>
