@@ -80,7 +80,7 @@
   <div><span>6</span>주요 문제와 해결 방법, 미완성 기능 및 한계</div>
 </div>
 
-<div class="note"><b>자료 기준.</b> 현재 구현은 2026-10-26 각 저장소 main을 기준으로 정리했다. 성능은 10/23 평가 200건, 기존 화면·S10 추적·인증·DLQ 기록은 10/21 자료다. 팀 라벨과의 일치율이며 실제 항공 정비 안전성이나 진단 정확도 지표는 아니다. 버전·출처는 6.4에 구분했다.</div>
+<div class="note"><b>자료 기준.</b> 현재 구현은 2026-10-26 각 저장소 main을 기준으로 정리했다. 성능은 10/23 평가 200건, 관리자 콘솔·인원 현황·참고 AMM 화면은 10/26 로컬 실행 캡처이며, 나머지 화면·S10 추적·인증·DLQ 기록은 10/21 자료다. 팀 라벨과의 일치율이며 실제 항공 정비 안전성이나 진단 정확도 지표는 아니다. 버전·출처는 6.4에 구분했다.</div>
 
 <!-- ============================ 1 ============================ -->
 <h1>1. 프로젝트 배경, 목표 및 비즈니스 가치</h1>
@@ -246,7 +246,7 @@
   <tr><td>어드민(통제사)</td><td>전체 요청과 사람 검토 우선 정렬, 통계(전체, 사람 검토, 자동 배정률, 첫 배정까지 평균 시간), RAG 데이터 상태, 수동 배정·종결, 인원 현황(/admin/staffing)</td></tr>
   <tr><td>판단 근거</td><td>단계별 AI 판단, ATA, 제안 부서, 재조사 횟수, 판단 근거와 참고 AMM을 나눈 패널, 상태 이력. 수동 배정이 AI 제안과 다르면 표시</td></tr>
 </table>
-<p class="small">아래 화면은 2026-10-21 촬영본이다. 현재 인원 현황(38명·8부서, 15초 갱신), 어드민 진입 버튼, 참고 AMM 분리 패널은 코드로 확인했다. 최신 화면 재촬영은 실행 환경 기동 후 필요하다. 인원 수는 조회용이며 자동 배정이나 개인 담당자 지정에 반영되지 않는다.</p>
+<p class="small">그림 3-1~3-7은 2026-10-21 동작 기록이며, 그림 3-8~3-10은 2026-10-26 로컬 서비스를 기동해 기존 DB로 촬영한 화면이다. 새 화면의 누적 통계와 10/23 평가 200건 결과는 구분한다. 인원 현황은 조회용이며 자동 배정이나 개인 담당자 지정에 반영되지 않는다.</p>
 <div class="grid2">
   <figure><img src="images/01_login.png"><figcaption>그림 3-1. 로그인</figcaption></figure>
   <figure><img src="images/02_signup_validation.png"><figcaption>그림 3-2. 신고자 회원가입 (입력 검증)</figcaption></figure>
@@ -254,10 +254,11 @@
   <figure><img src="images/05_reporter_request_detail.png"><figcaption>그림 3-4. 신고자 요청 상세와 진행 단계 (S10, 조사 경로 완료 후 배정)</figcaption></figure>
   <figure><img src="images/06_maintenance_queue_detail.png"><figcaption>그림 3-5. 정비팀 배정 대기함 (FCS, S23 반복 결함 바로 배정)</figcaption></figure>
   <figure><img src="images/08_maintenance_reject_dialog.png"><figcaption>그림 3-6. 정비팀 배정 거절 (사유 필수, 사람 검토로 전환)</figcaption></figure>
-  <figure><img src="images/10_admin_console.png"><figcaption>그림 3-7. 어드민 운영 콘솔과 통계 (시연 데이터 11건 기준)</figcaption></figure>
-  <figure><img src="images/12_admin_manual_assign.png"><figcaption>그림 3-8. 사람 검토(정비팀 거절) 건의 수동 배정</figcaption></figure>
 </div>
-<figure><img src="images/09b_investigation_sdr_evidence.png"><figcaption>그림 3-9. 판단 근거 화면: S10 브레이크 진동 → ATA 32, HYD. LLM2가 찾은 SDR 사례("REPEATED VIBRATION AND THUMPING … EACH TIME THE BRAKES WERE APPLIED")가 근거로 표시된다.</figcaption></figure>
+<figure style="max-width:440px;margin:10px auto 14px"><img src="images/12_admin_manual_assign.png"><figcaption>그림 3-7. 사람 검토(정비팀 거절) 건의 수동 배정. 2026-10-21 동작 기록.</figcaption></figure>
+<figure><img src="images/current/screenshots-20261026/01-admin-console.png"><figcaption>그림 3-8. 관리자 운영 콘솔과 인원 현황 진입 버튼. 2026-10-26 로컬 실행 화면의 누적 요청은 206건이며, 사람 검토 대기 56건·자동 배정률 73%·평균 첫 배정 시간 11초를 표시한다. 이 값은 5장의 평가 200건 통계가 아니다.</figcaption></figure>
+<figure><img src="images/current/screenshots-20261026/02-staffing.png"><figcaption>그림 3-9. 관리자 인원 현황. 8개 부서·총원 38명 중 출근 25명, 작업 가능 15명, 작업 불가 10명, 미출근 13명을 표시한다. 부서별 가용 인원은 정비팀 운영 참고용이며 배정 판단에 사용하지 않는다. 2026-10-26 촬영.</figcaption></figure>
+<figure><img src="images/current/screenshots-20261026/03-evidence-reference-amm.png"><figcaption>그림 3-10. HL7714(A319-132)의 엘리베이터 진동 요청(#d380aebd) 상세. SDR 판단 근거 아래에 ‘참고 AMM (정비팀 전달용)’을 별도로 표시하고, AMM 27-34-51 등의 참조번호·SDR ID·인용 맥락을 제공한다. 정식 매뉴얼 절차나 현재 기체 적용성을 확인한 자료는 아니다. 2026-10-26 촬영, 기존 10/23 처리 결과 조회.</figcaption></figure>
 
 <h2>3.3 데이터 구성</h2>
 <table>
@@ -271,7 +272,7 @@
   <tr><td>JASC·근거</td><td>548개 · 107,137건</td><td>분류 코드와 SDR·AMM 근거 ID. 파생 근거는 evidence_group_id로 묶음</td></tr>
   <tr><td>기술자료</td><td>61편 · 496조각</td><td>Airbus Safety First. R04 검색 구현, 정비 적용성 확인 대상 문서로 범위 제한</td></tr>
 </table>
-<p class="small">업무 규모는 현재 CSV, RAG 규모는 10/23 실행 검증 기록 기준이다. 이번 문서 개정에서 DB를 새로 기동·집계하지 않았다. V7은 SDR 임베딩, V8은 기술자료 1024차원 전환과 AMM 의미검색 테이블 제거, V9는 업무 조회 뷰, V10은 인원 현황, V11은 모델 검색 범위를 관리한다.</p>
+<p class="small">업무 규모는 현재 CSV, RAG 규모는 10/23 실행 검증 기록 기준이다. 화면 촬영을 위해 기존 DB를 기동했으나, 이 표의 RAG 규모를 전수 재집계하거나 데이터를 재적재하지 않았다. V7은 SDR 임베딩, V8은 기술자료 1024차원 전환과 AMM 의미검색 테이블 제거, V9는 업무 조회 뷰, V10은 인원 현황, V11은 모델 검색 범위를 관리한다.</p>
 <p>공유 DB의 생성·마이그레이션·시드·덤프 복원은 Backend가 소유한다. 기본 SDR·JASC·AMM 데이터 전용 덤프(6개 테이블)와 별도 임베딩·기술자료 전달본을 스키마 버전에 맞춰 복원하며 MCP는 조회 계정만 사용한다. 기존 볼륨을 문서 작업 중 덮어쓰지 않았다.</p>
 
 <!-- ============================ 4 ============================ -->
@@ -551,13 +552,13 @@ RID=22d2bbfc-7ac7-495c-932e-8bccff0857e6
   <tr><td>근거 검증의 범위</td><td>Backend는 ID·버전·범위를 검사한다. 증상 관련성과 구성 적용성은 AI·사람 검토에 의존</td></tr>
   <tr><td>검색과 외부 API</td><td>한국어 벡터 검색과 영어 단어 검색을 결합. 임베딩 API 실패 시 단어 검색 경고를 확인해야 하며 검색 성능은 별도 정답 근거로 평가 필요</td></tr>
   <tr><td>AMM 원문 부재</td><td>SDR의 번호·맥락만 제공한다. 정식 매뉴얼 절차·최신 개정·적용성은 확인하지 않음</td></tr>
-  <tr><td>화면과 실행 환경</td><td>현재 문서 작업 시 Docker·앱 서버가 꺼져 최신 화면을 재촬영하지 못함. 기존 화면은 10/21 기록으로 표시</td></tr>
+  <tr><td>화면과 실행 환경</td><td>10/26 로컬 DB·Backend·RabbitMQ·MCP·AI·프런트엔드를 기동해 관리자 콘솔·인원 현황·AMM 패널을 촬영. 기존 처리 결과의 화면 확인이며 새 모델 평가나 AWS 배포 검증은 아님</td></tr>
   <tr><td>서로 다른 검증 층</td><td>합성 기능 테스트, 실제 HTTP 서비스 평가, 브라우저 시연, AWS 운영 검증을 혼합하지 않음</td></tr>
 </table>
 <h2>6.4 기준 버전과 출처</h2>
 <table><thead><tr><th>대상</th><th>기준·출처</th></tr></thead><tr><td>LLM</td><td><a href="https://github.com/mro-agent-proj/LLM/commit/e5d379828e38200f77f5e3a6641c6ccc77dc1424">e5d379828e38200f77f5e3a6641c6ccc77dc1424</a></td></tr><tr><td>backend</td><td><a href="https://github.com/mro-agent-proj/backend/commit/ff47ad56c191e14f59bafb7075659ac0935ef008">ff47ad56c191e14f59bafb7075659ac0935ef008</a></td></tr><tr><td>agent</td><td><a href="https://github.com/mro-agent-proj/agent/commit/a30c900c6d3bc0ff8eda83ef3d4876a8679126ac">a30c900c6d3bc0ff8eda83ef3d4876a8679126ac</a></td></tr><tr><td>dashboard</td><td><a href="https://github.com/mro-agent-proj/dashboard/commit/99f25f1cb25615279c6e7aa65f864ea0b3934fe1">99f25f1cb25615279c6e7aa65f864ea0b3934fe1</a></td></tr><tr><td>integration</td><td><a href="https://github.com/mro-agent-proj/integration/commit/ebbc10e55a05cc037a033be351c97261b9d7ed1e">ebbc10e55a05cc037a033be351c97261b9d7ed1e</a></td></tr></table>
 <p>구현 설명은 위 커밋의 코드·Flyway·화면 소스를 기준으로 대조했다. 200건 평가 자료는 기존 실행의 원본과 공개 메타데이터·체크섬을 유지했다. 현재 AI 파일 34개가 평가 당시 해시와 일치함을 확인했으나, 모든 컨테이너·DB 상태를 현재 커밋으로 재실행했다는 뜻은 아니다.</p>
-<p class="small">문서 생성: final_report.template.html → source/build_report.py → HTML → Chrome PDF. 재촬영 대상은 관리자 콘솔(인원 현황 진입), /admin/staffing, 판단 근거·참고 AMM 분리 상세 화면이다. 원본 raw/·v1/·기존 화면·평가 번들 및 AWS architecture/는 보존했다.</p>
+<p class="small">문서 생성: final_report.template.html → source/build_report.py → HTML → Chrome PDF. 관리자 콘솔, /admin/staffing, 판단 근거·참고 AMM 분리 상세 화면을 10/26 캡처로 갱신했다. 화면별 출처·해시는 source/provenance.json에 기록했다. 원본 raw/·v1/·기존 화면·평가 번들 및 AWS architecture/는 보존했다.</p>
 
 </body>
 </html>
