@@ -1,12 +1,12 @@
 # 항공기 정비요청 Agent 산출물
 
-보고서·발표자료·평가 원자료처럼 **코드가 아닌 산출물**을 모아 관리하는 레포입니다.
+보고서·설계서·다이어그램·평가 결과처럼 **완성된 산출물만** 두는 레포입니다. 산출물을 만드는 코드·템플릿·중간 자료는 두지 않습니다.
 코드·커밋 조합·배포는 아래 표의 각 레포에서 관리합니다.
 
 | 폴더 | 내용 |
 | --- | --- |
-| `final-report/` | 최종 결과보고서와 근거 자료 (2026-10 기준, 아래 참고) |
-| `architecture/` | AWS 아키텍처 다이어그램 (PNG·HTML·생성 스크립트) |
+| `final-report/` | 최종 결과보고서 PDF·HTML(2026-10-26 개정), 초기 보고서 v1, 트러블슈팅 |
+| `architecture/` | AWS 아키텍처 다이어그램 (PNG·HTML) |
 | `design/` | 아키텍처 설계서: MVP, 문제와 AI 적용 지점, 구성도, 정상·실패 처리 흐름, LangGraph 노드, MCP 도구 |
 | [`evaluations/2026-10-23-isolated-200/`](evaluations/2026-10-23-isolated-200/) | 실제 LLM·HTTP MCP 서비스 평가 200건의 결과·감사 메타데이터·체크섬. 보고서와 별도 보관 |
 
@@ -25,18 +25,16 @@
 
 ## final-report
 
-- [현재 PDF](final-report/항공기_정비요청_Agent_최종결과보고서.pdf)와 같은 내용의 HTML: **2026-10-26 코드 기준 개정**
-- `final_report.template.html`: 기존 디자인을 유지한 편집 템플릿
-- `source/`: HTML·SVG·PDF 생성 스크립트와 기준 커밋
-- `images/current/`: 현재 구조도와 10/26 실제 화면 캡처. 기존 캡처·v1 그림은 과거 기록으로 보존
-- `raw/`, `v1/`: 2026-10-21의 구 시나리오 23건·S10 추적·인증·DLQ 기록과 초기 보고서
-- `트러블슈팅.md`: 과거 문제 20건을 보존하고 현재 후속 상태 추가
+- [최종 결과보고서 PDF](final-report/항공기_정비요청_Agent_최종결과보고서.pdf)와 같은 내용의 HTML: 2026-10-26 코드 기준 개정
+- [초기 보고서 v1](final-report/v1/MRO_Agent_최종결과보고서_v1.pdf), [트러블슈팅](final-report/트러블슈팅.md)
 
-대표 성능은 **2026-10-23 격리 후 서비스 평가 200건**을 재집계했습니다. 기존 10/21 시연·화면과 합산하지 않습니다. 상세 출처·재생성 방법·최신 화면 촬영 근거은 [보고서 README](final-report/README.md)에 있습니다.
-이 폴더는 원래 integration 레포의 `report/`에 있었고, 커밋 기록을 그대로 가져왔습니다.
+대표 성능은 2026-10-23 서비스 평가 200건 기준입니다. 읽는 기준은 [보고서 README](final-report/README.md)에 있습니다.
+
+생성 스크립트·편집 템플릿·원자료(`source/`, `raw/`, 구 캡처)는 정리했습니다. 보고서 본문이 인용하는 `source/provenance.json`, `raw/trace_final.html` 등은 커밋 [`4236b47`](https://github.com/mro-agent-proj/deliverables/tree/4236b47)에서 볼 수 있습니다.
 
 ## 운영 규칙
 
 - 산출물마다 최상위 폴더를 하나씩 둡니다 (예: `final-report/`, `presentation/`).
+- 완성본만 올립니다. 생성 스크립트·템플릿은 코드 레포나 개인 작업 폴더에 둡니다.
 - 보고서가 특정 커밋 조합이나 평가 결과를 근거로 하면, 그 조합(`verified-*` 태그나 커밋 SHA)을 해당 폴더 README나 본문에 적습니다.
 - 변경은 PR로 올립니다.
