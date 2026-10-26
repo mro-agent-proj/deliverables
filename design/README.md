@@ -1,6 +1,6 @@
 # 아키텍처 설계서
 
-항공기 정비요청 Agent의 MVP, 문제 정의, 구성도, 처리 흐름(정상·실패), LangGraph 노드 흐름, MCP 도구를 한 문서로 정리했습니다.
+항공기 정비요청 Agent의 MVP, 문제 정의, 구성도, 처리 흐름(정상·실패), LangGraph 노드 흐름, MCP 도구, AWS 배포 구성을 한 문서로 정리했습니다.
 화살표와 노드 이름은 실제 코드의 엔드포인트·클래스·메서드·큐·LangGraph 노드 이름과 같습니다 (2026-10-26 각 레포 main 기준).
 
 | 구성 | 코드 위치 |
@@ -41,7 +41,7 @@
 
 로그인·회원가입처럼 모든 사용자에게 공통인 기능은 빼고, 세 액터의 업무만 담았습니다. UML 표기(연관 실선, «include», «extend»)만 쓰고, 업무 순서는 아래 처리 흐름에서 다룹니다.
 
-<p align="center"><img src="usecase.svg" width="900" alt="MRO Agent 유즈케이스 다이어그램: 신고자, 정비팀, 관리자"></p>
+<p align="center"><img src="images/usecase.svg" width="900" alt="MRO Agent 유즈케이스 다이어그램: 신고자, 정비팀, 관리자"></p>
 
 | 액터 | 유즈케이스 | 화면 | API |
 |:--|:--|:--|:--|
@@ -64,7 +64,7 @@
 
 ## 구성도
 
-<p align="center"><img src="system-architecture-v2.png" width="1000" alt="구성도: dashboard, backend, RabbitMQ, AI 서버, MCP 서버, PostgreSQL"></p>
+<p align="center"><img src="images/system-architecture-v2.png" width="1000" alt="구성도: dashboard, backend, RabbitMQ, AI 서버, MCP 서버, PostgreSQL"></p>
 
 > **Harness** — MCP 도구 10초·재시도 1회 · 모델 호출 45초 · 단계별 도구 호출 8회 · 재조사 최대 2회 · AI 실행 280초 · 백엔드 처리 한도 5분 · 실행별 MCP 토큰 10분 · LLM 출력 스키마 검증 실패 시 1회 재요청
 
@@ -72,13 +72,13 @@
 
 ## 처리 흐름: 정상
 
-<p align="center"><img src="sequence-normal.png" width="1000" alt="정상 처리 시퀀스: 접수부터 자동 배정과 정비팀 수락까지"></p>
+<p align="center"><img src="images/sequence-normal.png" width="1000" alt="정상 처리 시퀀스: 접수부터 자동 배정과 정비팀 수락까지"></p>
 
 <br>
 
 ## 처리 흐름: 실패
 
-<p align="center"><img src="sequence-failure.png" width="1000" alt="실패 처리 시퀀스: 접수 보완, 재조사 한도, 근거 재검증 실패, AI 실패·시간 초과"></p>
+<p align="center"><img src="images/sequence-failure.png" width="1000" alt="실패 처리 시퀀스: 접수 보완, 재조사 한도, 근거 재검증 실패, AI 실패·시간 초과"></p>
 
 | 실패 | 어디서 막나 | 결과 |
 |:--|:--|:--|
@@ -95,7 +95,7 @@
 
 AI 서버는 LangGraph로 판단 단계를 그래프로 연결합니다. 단계마다 상태(State)를 체크포인트에 저장해, 서버가 재시작돼도 멈춘 단계부터 이어 갑니다.
 
-<p align="center"><img src="langgraph-flowchart-v2.png" width="600" alt="LangGraph AI 판단 순서도: classify, investigate, review, finalize, hold"></p>
+<p align="center"><img src="images/langgraph-flowchart-v2.png" width="600" alt="LangGraph AI 판단 순서도: classify, investigate, review, finalize, hold"></p>
 
 | 노드 | 하는 일 |
 |:--|:--|
@@ -130,4 +130,19 @@ AI는 MCP(Model Context Protocol)로 두 서버의 도구 9개를 호출합니�
 
 R02의 기본 검색 범위는 같은 기본 모델·ceo/neo 세대인 `MODEL_GENERATION`입니다. 초기 검색이 부족하면 이유를 남겨 `FAMILY`로 넓힐 수 있고, Backend 허용 목록은 단어·벡터 검색과 R05에 함께 적용됩니다. 정확 모델 `EXACT` 및 미확인 모델의 제한은 유지합니다. 질의 인코더 미설정·SDR 벡터 미준비·임베딩 API 실패 시 R02는 경고와 함께 단어 검색으로 대체합니다. 고정 단어검색 색인 자체가 없거나 비정상이면 오류입니다. 검색 범위 확대는 정비 구성의 동일성을 보증하지 않습니다.
 
-위 도구 수는 HTTP 요청 수나 검색 정확도가 아닙니다. 평가 정의·제약·버전은 [평가 원자료](../evaluations/2026-10-23-isolated-200/README.md)와 [최종 보고서 기준](../final-report/README.md)에 있습니다.
+위 도구 수는 HTTP 요청 수나 검색 정확도가 아닙니다. 평가 정의·제약·버전은 [평가 원자료](../evaluations/2026-10-23-isolated-200/README.md)와 [최종 보고서 기준](../report/README.md)에 있습니다.
+
+<br>
+
+## AWS 배포 구성
+
+[infra](https://github.com/mro-agent-proj/infra) 레포 Terraform으로 정의한 최종 배포 구성입니다. 아직 AWS에 배포하지 않았고 `terraform validate`까지 확인했습니다 (infra `fd0e8e4` 이후, 2026-10-26).
+
+<p align="center"><img src="aws/aws-architecture.png" width="1000" alt="AWS 아키텍처: CloudFront·WAF, ALB, ECS Fargate 서비스, Amazon MQ, RDS PostgreSQL"></p>
+
+- **요청 처리:** 사용자 → CloudFront(WAF) → ALB → backend → Amazon MQ → ai → business-mcp / rag-mcp → RDS
+- **배포:** GitHub Actions가 이미지를 ECR에 올리고, infra 레포에서만 `terraform apply`로 ECS에 배포
+- **1회성 작업:** db-init(DB 계정), rag-restore(S3 rag-data → RDS)
+- 주황 테두리는 ECS Fargate 서비스, 작은 원은 그 위에서 쓰는 기술입니다. 확대해서 보려면 [aws-architecture.html](aws/aws-architecture.html)을 브라우저로 엽니다.
+
+아이콘: [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/), 기술 로고 [gilbarbara/logos](https://github.com/gilbarbara/logos)(CC0). 각 로고는 해당 프로젝트·회사의 상표입니다. 다이어그램 생성 스크립트는 커밋 [`4236b47`](https://github.com/mro-agent-proj/deliverables/tree/4236b47/architecture/source)에 있습니다.
